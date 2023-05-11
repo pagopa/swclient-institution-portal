@@ -1,25 +1,26 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import {Routes, Route} from 'react-router-dom';
+/* MUI Core Components */
+import { Button } from '@mui/material';
+import { ThemeProvider } from "@mui/material";
+
+/* MUI Italia theme */
+import { theme } from "@pagopa/mui-italia";
+
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    
+    <ThemeProvider theme={theme}>
+      <div className="App">
+        <Button variant="contained">Hello World</Button>
+        <Routes>
+        <Route path='/' element={<div>test</div>}/>
+    </Routes>
+      </div>
+    </ThemeProvider>
   );
 }
 
