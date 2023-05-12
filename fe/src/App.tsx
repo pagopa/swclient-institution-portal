@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import { Routes, Route } from 'react-router-dom';
 /* MUI Core Components */
-import { Button } from '@mui/material';
+import { VerticalNav } from './components/VerticalNav';
 import { ThemeProvider } from "@mui/material";
 import { HeaderAccount, Footer } from '@pagopa/mui-italia';
 /* MUI Italia theme */
@@ -12,6 +12,23 @@ import { theme } from "@pagopa/mui-italia";
 
 
 function App() {
+
+  const [sections, setSections] = useState([{
+    title: "Paga",
+    active: true
+  },
+  {
+    title: "Storico",
+    active: false
+
+  },
+  {
+    title: "Dispositivi",
+    active: false
+
+  }])
+
+  useEffect(() => { console.log(sections) }, [sections])
   return (
 
     <ThemeProvider theme={theme}>
@@ -37,6 +54,7 @@ function App() {
             onClick: () => { }
           }]}
         />
+        <VerticalNav sections={sections} setSections={setSections} />
         <Routes>
           <Route path='/' element={<div>test</div>} />
         </Routes>
