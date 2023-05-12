@@ -14,6 +14,7 @@ import { Link } from 'react-router-dom';
 export interface Section {
     title: string;
     path: string;
+    active: boolean
 }
 export interface VerticalNavProps {
     sections: Array<Section>;
@@ -25,23 +26,35 @@ export const VerticalNav = ({ sections, setSections }: VerticalNavProps) => {
     const theme = useTheme();
 
 
+    const setActiveSection = (sectionIndex: number) => {
+        let sectionArray: Section[] = [];
+
+        sections.map((sec, index) => {
+            if (index === sectionIndex) {
+                sec.active = true;
+            }
+            else {
+                sec.active = false;
+            }
+            sectionArray.push(sec);
+
+        })
+
+        setSections(sectionArray);
+    }
 
     return (
         <ThemeProvider theme={theme}>
-            <Box sx={{ width: '100%', maxWidth: 360, }}>
+            <Box sx={{ width: '100%', maxWidth: 360, float: 'left' }}>
                 <nav aria-label="main mailbox folders">
                     <List sx={{ paddingTop: "0px" }}>
                         {sections.map((section, index) => {
-                            const bgColor = index === 0
-                                ? theme.palette.primary.dark
-                                : index === 1
-                                    ? theme.palette.primary.main
-                                    : theme.palette.primary.light;
+                            const bgColor = section.active ? theme.palette.primary.light : theme.palette.primary.dark;
                             return (
-                                <Link to={section.path}>
+                                <Link to={section.path} onClick={() => { setActiveSection(index) }}>
                                     <ListItem disablePadding sx={{ bgcolor: bgColor, paddingTop: "0px" }} >
                                         <ListItemButton>
-                                            <ListItemText primary={section.title} sx={{ color: "primary.contrastText" }} />
+                                            <ListItemText primary={section.title} sx={{ color: "primary.contrastText", textAlign: 'center' }} />
                                         </ListItemButton>
                                     </ListItem>
                                 </Link>
