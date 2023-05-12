@@ -9,11 +9,11 @@ import {
     ListItemButton,
     useTheme,
 } from "@mui/material";
-import { Method } from '@testing-library/react';
+import { Link } from 'react-router-dom';
 
 export interface Section {
     title: string;
-    active: boolean;
+    path: string;
 }
 export interface VerticalNavProps {
     sections: Array<Section>;
@@ -24,19 +24,7 @@ export interface VerticalNavProps {
 export const VerticalNav = ({ sections, setSections }: VerticalNavProps) => {
     const theme = useTheme();
 
-    const setActiveSection = (sectionIndex: number) => {
-        let sec: Section[] = [];
-        sections.map((element, index) => {
-            if (sectionIndex === index) {
-                element.active = true;
-            }
-            else {
-                element.active = false;
-            }
-            sec.push(element);
-        })
-        setSections(sec);
-    }
+
 
     return (
         <ThemeProvider theme={theme}>
@@ -50,11 +38,13 @@ export const VerticalNav = ({ sections, setSections }: VerticalNavProps) => {
                                     ? theme.palette.primary.main
                                     : theme.palette.primary.light;
                             return (
-                                <ListItem disablePadding sx={{ bgcolor: bgColor, paddingTop: "0px" }} >
-                                    <ListItemButton onClick={() => { setActiveSection(index) }} >
-                                        <ListItemText primary={section.title} sx={{ color: "primary.contrastText" }} />
-                                    </ListItemButton>
-                                </ListItem>
+                                <Link to={section.path}>
+                                    <ListItem disablePadding sx={{ bgcolor: bgColor, paddingTop: "0px" }} >
+                                        <ListItemButton>
+                                            <ListItemText primary={section.title} sx={{ color: "primary.contrastText" }} />
+                                        </ListItemButton>
+                                    </ListItem>
+                                </Link>
                             )
                         })}
                     </List>

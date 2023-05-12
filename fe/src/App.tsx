@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, BrowserRouter } from 'react-router-dom';
 /* MUI Core Components */
 import { VerticalNav } from './components/VerticalNav';
 import { ThemeProvider } from "@mui/material";
@@ -15,16 +15,16 @@ function App() {
 
   const [sections, setSections] = useState([{
     title: "Paga",
-    active: true
+    path: "paga"
   },
   {
     title: "Storico",
-    active: false
+    path: "storico"
 
   },
   {
     title: "Dispositivi",
-    active: false
+    path: "dispositivo"
 
   }])
 
@@ -57,6 +57,14 @@ function App() {
         <VerticalNav sections={sections} setSections={setSections} />
         <Routes>
           <Route path='/' element={<div>test</div>} />
+          {
+            sections.map((section, index) => {
+              return (<>
+                <Route path={"/" + section.path} element={<>{section.title}</>} />
+              </>
+              )
+            })
+          }
         </Routes>
         <Footer loggedUser={true}
           companyLink={{ href: "test", ariaLabel: "Company Link" }}
