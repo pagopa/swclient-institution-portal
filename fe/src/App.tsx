@@ -5,7 +5,7 @@ import { Routes, Route } from 'react-router-dom';
 /* MUI Core Components */
 import { Button } from '@mui/material';
 import { ThemeProvider } from "@mui/material";
-import { HeaderAccount, Footer, HorizontalNav } from '@pagopa/mui-italia';
+import { HeaderAccount, Footer } from '@pagopa/mui-italia';
 /* MUI Italia theme */
 import { theme } from "@pagopa/mui-italia";
 
@@ -37,12 +37,6 @@ function App() {
             onClick: () => { }
           }]}
         />
-        <HorizontalNav sections={[
-          {
-            title: "string",
-            subtitle: "string";
-            cta: sectionCTA
-          }]} />
         <Routes>
           <Route path='/' element={<div>test</div>} />
         </Routes>
