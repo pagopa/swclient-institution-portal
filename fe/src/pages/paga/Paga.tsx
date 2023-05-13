@@ -21,6 +21,8 @@ export const Paga = () => {
   const [terminalError, setTerminalError] = useState(false);
   const [terminalErrorHelper, setTerminalErrorHelper] = useState("");
 
+  const validateTaxCode = new RegExp("[A-Z]{6}[0-9]{2}[A-Z][0-9]{2}[A-Z][0-9]{3}[A-Z]");
+
   useEffect(() => {
     setTerminals([{ terminalLabel: "Reception POS", terminalId: "DXA0132" },
     { terminalLabel: "Room A POS", terminalId: "DXB0132" },
@@ -38,7 +40,6 @@ export const Paga = () => {
   const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const name = e.target.name;
     const value = e.target.value;
-    console.log(name, value);
     switch (name) {
       case "noticeNumber":
         setPaymentNoticeNumber(value);
@@ -67,6 +68,10 @@ export const Paga = () => {
           setTaxCodeError(true);
           setTaxCodeErrorHelper("Inserire 16 cifre");
         }
+        else if (!validateTaxCode.test(value)) {
+          setTaxCodeError(true);
+          setTaxCodeErrorHelper("Codice fiscale errato")
+        }
         else {
           setTaxCodeError(false);
           setTaxCodeErrorHelper("");
@@ -91,6 +96,7 @@ export const Paga = () => {
   }
   const activatePayment = () => {
 
+    console.log(validateTaxCode.test(taxCode));
     if (paymentNoticeNumber === "") {
       setPaymentNoticeNumberError(true);
       setPaymentNoticeNumberHelper("Campo obbligatorio")
@@ -110,7 +116,7 @@ export const Paga = () => {
 
     if (selectedTerminal === "-") {
       setTerminalError(true);
-      setTaxCodeErrorHelper("Campo obbligatorio")
+      setTerminalErrorHelper("Campo obbligatorio")
     }
 
     if (terminalError || taxCodeError || paymentNoticeNumberError) {
@@ -175,7 +181,7 @@ export const Paga = () => {
                 })
               }
             </Select>
-            <FormHelperText>{terminalErrorHelper}</FormHelperText>
+            <FormHelperText error>{terminalErrorHelper}</FormHelperText>
           </FormControl>
           <Button variant="contained" onClick={activatePayment} sx={{ width: "30vw" }}>Attiva pagamento </Button>
         </Stack>
