@@ -15,6 +15,7 @@ export interface Section {
     title: string;
     path: string;
     active: boolean
+    element: JSX.Element
 }
 export interface VerticalNavProps {
     sections: Array<Section>;
@@ -51,7 +52,7 @@ export const VerticalNav = ({ sections, setSections }: VerticalNavProps) => {
                         {sections.map((section, index) => {
                             const bgColor = section.active ? theme.palette.primary.light : theme.palette.primary.dark;
                             return (
-                                <Link to={section.path} onClick={() => { setActiveSection(index) }}>
+                                <Link to={section.path} onClick={() => { setActiveSection(index) }} key={index}>
                                     <ListItem disablePadding sx={{ bgcolor: bgColor, paddingTop: "0px" }} >
                                         <ListItemButton>
                                             <ListItemText primary={section.title} sx={{ color: "primary.contrastText", textAlign: 'center' }} />

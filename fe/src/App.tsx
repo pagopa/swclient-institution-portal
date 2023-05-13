@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { Routes, Route, BrowserRouter } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 /* MUI Core Components */
 import { VerticalNav } from './components/VerticalNav';
 import { ThemeProvider } from "@mui/material";
 import { HeaderAccount, Footer } from '@pagopa/mui-italia';
 /* MUI Italia theme */
 import { theme } from "@pagopa/mui-italia";
-
+import { Paga } from './pages/paga';
 
 
 function App() {
@@ -16,18 +16,21 @@ function App() {
   const [sections, setSections] = useState([{
     title: "Paga",
     path: "paga",
-    active: true
+    active: true,
+    element: <Paga />
   },
   {
     title: "Storico",
     path: "storico",
-    active: false
+    active: false,
+    element: <></>
 
   },
   {
     title: "Dispositivi",
     path: "dispositivo",
-    active: false
+    active: false,
+    element: <></>
 
   }])
 
@@ -58,11 +61,11 @@ function App() {
         />
         <VerticalNav sections={sections} setSections={setSections} />
         <Routes>
-          <Route path='/' element={<div>test</div>} />
+          <Route path='/' element={<Navigate to="/paga" replace />} />
           {
             sections.map((section, index) => {
               return (<>
-                <Route path={"/" + section.path} element={<div>{section.title}</div>} />
+                <Route path={"/" + section.path} element={section.element} />
               </>
               )
             })
