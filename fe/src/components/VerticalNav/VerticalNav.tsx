@@ -46,7 +46,7 @@ export const VerticalNav = ({ sections, setSections }: VerticalNavProps) => {
 
     return (
         <ThemeProvider theme={theme}>
-            <Box sx={{ width: '100%', maxWidth: 360, float: 'left' }}>
+            <Box sx={{ width: '100%', maxWidth: 360, float: 'left', marginRight: "10vw" }}>
                 <nav aria-label="main mailbox folders">
                     <List sx={{ paddingTop: "0px" }}>
                         {sections.map((section, index) => {

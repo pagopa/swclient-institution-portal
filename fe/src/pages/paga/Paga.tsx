@@ -1,7 +1,6 @@
 import React, { ChangeEventHandler, useEffect, useState } from 'react';
 
-import { Typography, Box, Stack, Paper, styled, TextField, Grid, InputLabel, Select, MenuItem, FormControl, Container, Button } from '@mui/material';
-import { theme } from "@pagopa/mui-italia";
+import { Typography, FormHelperText, Box, Stack, Paper, styled, TextField, Grid, InputLabel, Select, MenuItem, FormControl, Container, Button, SelectChangeEvent } from '@mui/material';
 
 
 export interface Terminal {
@@ -19,7 +18,8 @@ export const Paga = () => {
   const [paymentNoticeNumberHelper, setPaymentNoticeNumberHelper] = useState("");
   const [taxCodeError, setTaxCodeError] = useState(false);
   const [taxCodeHelper, setTaxCodeErrorHelper] = useState("");
-
+  const [terminalError, setTerminalError] = useState(false);
+  const [terminalErrorHelper, setTerminalErrorHelper] = useState("");
 
   useEffect(() => {
     setTerminals([{ terminalLabel: "Reception POS", terminalId: "DXA0132" },
@@ -38,6 +38,7 @@ export const Paga = () => {
   const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const name = e.target.name;
     const value = e.target.value;
+    console.log(name, value);
     switch (name) {
       case "noticeNumber":
         setPaymentNoticeNumber(value);
@@ -75,6 +76,19 @@ export const Paga = () => {
         break;
     }
   }
+
+  const onChangeSelect = (e: SelectChangeEvent<string>) => {
+    const value = e.target.value;
+    setSelectedTerminal(value);
+    if (value === "-") {
+      setTerminalError(true);
+      setTerminalErrorHelper("Campo obbligatorio")
+    }
+    else {
+      setTerminalError(false);
+      setTerminalErrorHelper("");
+    }
+  }
   const activatePayment = () => {
 
     if (paymentNoticeNumber === "") {
@@ -92,6 +106,15 @@ export const Paga = () => {
     else if (taxCode.length !== 16) {
       setTaxCodeError(true);
       setTaxCodeErrorHelper("Inserire 16 cifre")
+    }
+
+    if (selectedTerminal === "-") {
+      setTerminalError(true);
+      setTaxCodeErrorHelper("Campo obbligatorio")
+    }
+
+    if (terminalError || taxCodeError || paymentNoticeNumberError) {
+      return;
     }
   }
 
@@ -133,16 +156,17 @@ export const Paga = () => {
             helperText={taxCodeHelper}
             required />
           <FormControl sx={{ width: "30vw" }}>
-            <InputLabel id="terminal">Terminale</InputLabel>
+            <InputLabel id="terminal" error={terminalError}>Terminale</InputLabel>
             <Select
               labelId="terminal"
               id="terminal"
               name="terminal"
               value={selectedTerminal}
               label="Terminale"
-              onChange={(e) => { setSelectedTerminal(e.target.value) }}
+              onChange={onChangeSelect}
+              error={terminalError}
             >
-              <MenuItem value={"-"}>-</MenuItem>
+              <MenuItem disabled value={"-"}>-</MenuItem>
               {
                 terminals.map((term, index) => {
                   return (
@@ -151,6 +175,7 @@ export const Paga = () => {
                 })
               }
             </Select>
+            <FormHelperText>{terminalErrorHelper}</FormHelperText>
           </FormControl>
           <Button variant="contained" onClick={activatePayment} sx={{ width: "30vw" }}>Attiva pagamento </Button>
         </Stack>
