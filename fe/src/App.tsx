@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation, matchRoutes, useParams, Params } from 'react-router-dom';
 /* MUI Core Components */
 import { VerticalNav } from './components/VerticalNav';
 import { ThemeProvider } from "@mui/material";
@@ -9,9 +9,39 @@ import { HeaderAccount, Footer } from '@pagopa/mui-italia';
 /* MUI Italia theme */
 import { theme } from "@pagopa/mui-italia";
 import { Paga } from './pages/paga';
+import { Dispositivi } from './pages/dispositivi';
+import { Storico } from './pages/storico';
 
 
 function App() {
+
+
+  const getRoutePath = (location: any, params: Params): string => {
+    const { pathname } = location;
+
+    if (!Object.keys(params).length) {
+      return pathname; // we don't need to replace anything
+    }
+
+    let path = pathname;
+    Object.entries(params).forEach(([paramName, paramValue]) => {
+      if (paramValue) {
+        path = path.replace(paramValue, `:${paramName}`);
+      }
+    });
+    return path;
+  };
+
+
+  const getCurrentPath = () => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const location = useLocation();
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const params = useParams();
+    const path = getRoutePath(location, params);
+    return path.split("/")[1];
+  }
+
 
   const [sections, setSections] = useState([{
     title: "Paga",
@@ -23,14 +53,14 @@ function App() {
     title: "Storico",
     path: "storico",
     active: false,
-    element: <></>
+    element: <Storico />
 
   },
   {
     title: "Dispositivi",
     path: "dispositivo",
     active: false,
-    element: <></>
+    element: <Dispositivi />
 
   }])
 
@@ -59,18 +89,20 @@ function App() {
             onClick: () => { }
           }]}
         />
-        <VerticalNav sections={sections} setSections={setSections} />
-        <Routes>
-          <Route path='/' element={<Navigate to="/paga" replace />} />
-          {
-            sections.map((section, index) => {
-              return (<>
-                <Route path={"/" + section.path} element={section.element} />
-              </>
-              )
-            })
-          }
-        </Routes>
+        <VerticalNav sections={sections} setSections={setSections} currentPath={getCurrentPath()} />
+        <div style={{ marginTop: "2vh" }}>
+          <Routes>
+            <Route path='/' element={<Navigate to="/paga" replace />} />
+            {
+              sections.map((section, index) => {
+                return (<>
+                  <Route path={"/" + section.path} element={section.element} />
+                </>
+                )
+              })
+            }
+          </Routes>
+        </div>
         <div style={{ position: 'fixed', bottom: '0', width: "100%" }}>
           <Footer loggedUser={true}
             companyLink={{ href: "test", ariaLabel: "Company Link" }}

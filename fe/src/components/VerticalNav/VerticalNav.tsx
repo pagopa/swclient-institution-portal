@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ThemeProvider } from "@mui/material";
 import { HorizontalNavProps, theme } from "@pagopa/mui-italia";
 import {
@@ -20,12 +20,21 @@ export interface Section {
 export interface VerticalNavProps {
     sections: Array<Section>;
     setSections: (sec: Array<Section>) => void;
+    currentPath: any;
 }
 
 
-export const VerticalNav = ({ sections, setSections }: VerticalNavProps) => {
+export const VerticalNav = ({ sections, setSections, currentPath }: VerticalNavProps) => {
     const theme = useTheme();
 
+    /* I know this is not the best way, but for now I think it will do */
+    useEffect(() => {
+        sections.map((sec, ind) => {
+            if (sec.path === currentPath) {
+                setActiveSection(ind);
+            }
+        })
+    }, [currentPath])
 
     const setActiveSection = (sectionIndex: number) => {
         let sectionArray: Section[] = [];
