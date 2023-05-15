@@ -172,7 +172,7 @@ export const Paga = () => {
               onChange={onChangeSelect}
               error={terminalError}
             >
-              <MenuItem disabled value={"-"}>-</MenuItem>
+              <MenuItem disabled value={"-"}>Scegli un terminale...</MenuItem>
               {
                 terminals.map((term, index) => {
                   return (
