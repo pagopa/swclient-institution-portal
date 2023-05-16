@@ -5,8 +5,8 @@ import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import DeleteIcon from '@mui/icons-material/DeleteForever';
 
 const columns: GridColDef[] = [
-  { field: 'terminalId', headerName: 'ID Dispositivo', type: 'string', width: 200, sortable: true },
-  { field: 'label', headerName: 'Label dispositivo', width: 130, sortable: true, type: 'string' },
+  { field: 'terminalId', headerName: 'POS', type: 'string', width: 200, sortable: true },
+  { field: 'label', headerName: 'Descrizione', width: 130, sortable: true, type: 'string' },
   { field: 'lastOperation', headerName: 'Data ultima operazione', width: 130, type: 'date' },
   {
     field: 'action',

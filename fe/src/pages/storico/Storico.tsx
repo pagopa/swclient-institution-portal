@@ -3,7 +3,7 @@ import React, { ChangeEventHandler, useEffect, useState } from 'react';
 import { Typography, Button, FormHelperText, Box, Stack, Paper, styled, Grid, InputLabel, Select, MenuItem, FormControl, Container, TableHead, TableRow, TableCell, SelectChangeEvent, TableContainer, Table, TableBody } from '@mui/material';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import Modal from '@mui/material/Modal';
-import { Today } from '@mui/icons-material';
+import Chip from '@mui/material/Chip';
 
 
 export interface Terminal {
@@ -22,8 +22,43 @@ export interface Row {
   description: string,
   company: string,
   office: string,
-  fee: string | number,
-  totalAmount: string | number
+  fee: number,
+  totalAmount: number
+
+}
+
+export const StatusChip = ({ status }: { status: string | undefined }) => {
+  let statusLabel;
+  switch (status) {
+    case 'PRE_CLOSE':
+      statusLabel = "Operazione in sospeso";
+      return <Chip label={statusLabel || ""} color={"info"} />
+      break;
+    case 'PENDING':
+      statusLabel = "Operazione in sospeso";
+      return <Chip label={statusLabel || ""} color={"info"} />
+      break;
+    case 'ERROR_ON_CLOSE':
+      statusLabel = "Operazione da rimborsare";
+      return <Chip label={statusLabel || ""} color={"error"} />
+      break;
+    case 'ERROR_ON_RESULT':
+      statusLabel = "Operazione da rimborsare";
+      return <Chip label={statusLabel || ""} color={"error"} />
+      break;
+    case 'ERROR_ON_PAYMENT':
+      statusLabel = "Operazione fallita";
+      return <Chip label={statusLabel || ""} color={"error"} />
+      break;
+    case 'CLOSED':
+      statusLabel = "Eseguita";
+      return <Chip label={statusLabel || ""} color={"success"} />
+
+      break;
+    default:
+      return <></>
+      break;
+  }
 
 }
 
@@ -42,32 +77,10 @@ export const Storico = () => {
   }
 
 
+
   const [rows, setRows] = useState([{}]);
 
-  const getStatusLabel = (status: string | undefined) => {
-    switch (status) {
-      case 'PRE_CLOSE':
-        return "Operazione in sospeso";
-        break;
-      case 'PENDING':
-        return "Operazione in sospeso";
-        break;
-      case 'ERROR_ON_CLOSE':
-        return "Operazione da rimborsare";
-        break;
-      case 'ERROR_ON_RESULT':
-        return "Operazione da rimborsare";
-        break;
-      case 'ERROR_ON_PAYMENT':
-        return "Operazione fallita";
-        break;
-      case 'CLOSED':
-        return "Eseguita";
-        break;
-      default:
-        break;
-    }
-  }
+
 
   const apiData = [{
     "operationType": "PAYMENT_NOTICE",
@@ -160,7 +173,7 @@ export const Storico = () => {
 
   const columns: GridColDef[] = [
     { field: 'transactionId', headerName: 'Numero transazione', type: 'string', width: 150, sortable: true },
-    { field: 'noticeNumber', headerName: 'Numero avviso', type: 'number', width: 200, sortable: true },
+    { field: 'noticeNumber', headerName: 'Codice  avviso', type: 'number', width: 200, sortable: true },
     { field: 'statusTimestamp', headerName: 'Data', width: 130, sortable: true, type: 'date' },
     { field: 'amount', headerName: 'Ammontare', width: 130 },
     {
@@ -237,13 +250,21 @@ export const Storico = () => {
               </Typography>
               <Stack>
                 <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                  <b>Data: </b> {selectedTransaction?.statusTimestamp?.toDateString()}
+                  <b>Data: </b> {selectedTransaction?.statusTimestamp?.getDay() + " " + selectedTransaction?.statusTimestamp?.toLocaleString('default', { month: 'long' })
+                    + " " + selectedTransaction?.statusTimestamp?.getFullYear() + ", " +
+                    selectedTransaction?.statusTimestamp?.getHours() + ":" +
+                    selectedTransaction?.statusTimestamp?.getMinutes()}
                 </Typography>
                 <Typography id="modal-modal-description" sx={{ mt: 2 }}>
                   <b>Id transazione: </b> {selectedTransaction?.transactionId}
                 </Typography>
                 <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                  <b>Numero avviso: </b> {selectedTransaction?.noticeNumber}
+                  <b>Codice avviso: </b>
+                  {selectedTransaction?.noticeNumber.slice(0, 4)
+                    + " " + selectedTransaction?.noticeNumber.slice(4, 8)
+                    + " " + selectedTransaction?.noticeNumber.slice(8, 12)
+                    + " " + selectedTransaction?.noticeNumber.slice(12, 16)
+                    + " " + selectedTransaction?.noticeNumber.slice(16, 18)}
                 </Typography>
                 <Typography id="modal-modal-description" sx={{ mt: 2 }}>
                   <b>Descrizione: </b> {selectedTransaction?.description}
@@ -255,13 +276,13 @@ export const Storico = () => {
                   <b>Ufficio: </b> {selectedTransaction?.office}
                 </Typography>
                 <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                  <b>Tariffa: </b> {selectedTransaction?.fee} €
+                  <b>Commissione: </b> {selectedTransaction?.fee.toFixed(2)} €
                 </Typography>
                 <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                  <b>Ammontare totale: </b> {selectedTransaction?.totalAmount} €
+                  <b>Ammontare totale: </b> {selectedTransaction?.totalAmount.toFixed(2)} €
                 </Typography>
                 <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                  <b>Stato: </b> {getStatusLabel(selectedTransaction?.status)}
+                  <b>Stato: </b> {<StatusChip status={selectedTransaction?.status} />}
                 </Typography>
               </Stack>
             </Box>

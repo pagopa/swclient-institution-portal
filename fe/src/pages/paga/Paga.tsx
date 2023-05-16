@@ -21,7 +21,7 @@ export const Paga = () => {
   const [terminalError, setTerminalError] = useState(false);
   const [terminalErrorHelper, setTerminalErrorHelper] = useState("");
 
-  const validateTaxCode = new RegExp("[A-Z]{6}[0-9]{2}[A-Z][0-9]{2}[A-Z][0-9]{3}[A-Z]");
+  const validateTaxCode = new RegExp("[0-9]{11}");
 
   useEffect(() => {
     setTerminals([{ terminalLabel: "Reception POS", terminalId: "DXA0132" },
@@ -64,13 +64,13 @@ export const Paga = () => {
           setTaxCodeErrorHelper("Campo obbligatorio")
 
         }
-        else if (value.length !== 16) {
+        else if (value.length !== 11) {
           setTaxCodeError(true);
-          setTaxCodeErrorHelper("Inserire 16 cifre");
+          setTaxCodeErrorHelper("Inserire 11 cifre");
         }
         else if (!validateTaxCode.test(value)) {
           setTaxCodeError(true);
-          setTaxCodeErrorHelper("Codice fiscale errato")
+          setTaxCodeErrorHelper("Codice ente errato")
         }
         else {
           setTaxCodeError(false);
@@ -154,7 +154,7 @@ export const Paga = () => {
             sx={{ width: "30vw" }}
             id="taxCode"
             name="taxCode"
-            label="Codice fiscale"
+            label="Codice ente"
             variant="outlined"
             onChange={onChange}
             value={taxCode}
