@@ -41,10 +41,6 @@ export const Paga = () => {
     const name = e.target.name;
     const value = e.target.value;
 
-    const reg = new RegExp("[0-9]");
-    if (!reg.test(value)) {
-      return;
-    }
 
     switch (name) {
       case "noticeNumber":
