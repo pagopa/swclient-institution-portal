@@ -109,9 +109,9 @@ export const Paga = () => {
       setTaxCodeError(true);
       setTaxCodeErrorHelper("Campo obbligatorio")
     }
-    else if (taxCode.length !== 16) {
+    else if (taxCode.length !== 11) {
       setTaxCodeError(true);
-      setTaxCodeErrorHelper("Inserire 16 cifre")
+      setTaxCodeErrorHelper("Inserire 11cifre")
     }
 
     if (selectedTerminal === "-") {
