@@ -40,6 +40,7 @@ export const Paga = () => {
   const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const name = e.target.name;
     const value = e.target.value;
+
     switch (name) {
       case "noticeNumber":
         setPaymentNoticeNumber(value);
@@ -151,6 +152,7 @@ export const Paga = () => {
             required
           />
           <TextField
+            type="number"
             sx={{ width: "30vw" }}
             id="taxCode"
             name="taxCode"
