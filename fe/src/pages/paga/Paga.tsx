@@ -40,7 +40,10 @@ export const Paga = () => {
   const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const name = e.target.name;
     const value = e.target.value;
-
+    const reg = new RegExp("(^[0-9]+$|^$)");
+    if (!reg.test(value)) {
+      return;
+    }
 
     switch (name) {
       case "noticeNumber":
@@ -113,7 +116,7 @@ export const Paga = () => {
     }
     else if (taxCode.length !== 11) {
       setTaxCodeError(true);
-      setTaxCodeErrorHelper("Inserire 11cifre")
+      setTaxCodeErrorHelper("Inserire 11 cifre")
     }
 
     if (selectedTerminal === "-") {
@@ -140,7 +143,7 @@ export const Paga = () => {
         </Grid>
         <Stack spacing={6} >
           <TextField
-            type='number'
+            type='text'
             sx={{ width: "30vw" }}
             id="noticeNumber"
             name="noticeNumber"
@@ -153,7 +156,7 @@ export const Paga = () => {
             required
           />
           <TextField
-            type="number"
+            type="text"
             sx={{ width: "30vw" }}
             id="taxCode"
             name="taxCode"
