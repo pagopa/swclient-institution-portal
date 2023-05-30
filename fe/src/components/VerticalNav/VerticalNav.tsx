@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
 	List,
 	ListItemIcon,
@@ -6,7 +6,7 @@ import {
 	Box,
 	ListItemButton,
 } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { theme } from '@pagopa/mui-italia';
 
 export interface Section {
@@ -27,10 +27,20 @@ export const VerticalNav = ({
 	setSections,
 	currentPath,
 }: VerticalNavProps) => {
-	const [selectedIndex, setSelectedIndex] = useState(0);
+	const [selectedIndex, setSelectedIndex] = useState(-1);
 	const handleListItemClick = (index: number) => {
 		setSelectedIndex(index);
 	};
+	const location = useLocation();
+	const path = location.pathname.split('/')[1];
+
+	useEffect(() => {
+		sections.map((sec, index) => {
+			if (sec.path === path) {
+				setSelectedIndex(index);
+			}
+		});
+	}, [path]);
 
 	return (
 		<Box
