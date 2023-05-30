@@ -11,7 +11,9 @@ import { theme } from "@pagopa/mui-italia";
 import { Paga } from './pages/paga';
 import { Dispositivi } from './pages/dispositivi';
 import { Storico } from './pages/storico';
-
+import PaymentsIcon from '@mui/icons-material/Payments';
+import TabletAndroidIcon from '@mui/icons-material/TabletAndroid';
+import HistoryIcon from '@mui/icons-material/History';
 
 function App() {
 
@@ -47,20 +49,25 @@ function App() {
     title: "Paga",
     path: "paga",
     active: true,
-    element: <Paga />
+    element: <Paga />,
+    icon: <PaymentsIcon />
   },
   {
     title: "Storico",
     path: "storico",
     active: false,
-    element: <Storico />
+    element: <Storico />,
+    icon: <TabletAndroidIcon />
+
 
   },
   {
     title: "Dispositivi",
     path: "dispositivo",
     active: false,
-    element: <Dispositivi />
+    element: <Dispositivi />,
+    icon: <HistoryIcon />
+
 
   }])
 
