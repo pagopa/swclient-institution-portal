@@ -61,7 +61,7 @@ export const VerticalNav = ({ sections, setSections, currentPath }: VerticalNavP
                         {sections.map((section, index) => {
                             const bgColor = section.active ? theme.palette.primary.light : theme.palette.primary.dark;
                             return (
-                                <Link to={section.path} onClick={() => { setActiveSection(index) }} key={index}>
+                                <Link to={section.path} onClick={() => { setActiveSection(index) }} key={index} style={{ textDecoration: 'none' }}>
                                     <ListItem disablePadding sx={{ bgcolor: bgColor, paddingTop: "0px" }} >
                                         <ListItemButton>
                                             <ListItemText primary={section.title} sx={{ color: "primary.contrastText", textAlign: 'center' }} />
