@@ -40,13 +40,17 @@ export const Paga = () => {
   const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const name = e.target.name;
     const value = e.target.value;
-    const reg = new RegExp("(^[0-9]+$|^$)");
-    if (!reg.test(value)) {
-      return;
-    }
-
+    // const reg = new RegExp("");
+    // if (!reg.test(value)) {
+    // return;
+    //}
+    let reg;
     switch (name) {
       case "noticeNumber":
+        reg = new RegExp("(^[0-9]{0,18}$|^$)")
+        if (!reg.test(value)) {
+          return;
+        }
         setPaymentNoticeNumber(value);
         if (value === "") {
           setPaymentNoticeNumberError(true);
@@ -63,6 +67,10 @@ export const Paga = () => {
         }
         break;
       case "taxCode":
+        reg = new RegExp("(^[0-9]{0,11}$|^$)")
+        if (!reg.test(value)) {
+          return;
+        }
         setTaxCode(value);
         if (value === "") {
           setTaxCodeError(true);
@@ -101,7 +109,6 @@ export const Paga = () => {
   }
   const activatePayment = () => {
 
-    console.log(validateTaxCode.test(taxCode));
     if (paymentNoticeNumber === "") {
       setPaymentNoticeNumberError(true);
       setPaymentNoticeNumberHelper("Campo obbligatorio")
