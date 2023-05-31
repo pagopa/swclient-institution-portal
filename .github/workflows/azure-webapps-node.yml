@@ -57,7 +57,7 @@ jobs:
     - name: Upload artifact for deployment job
       uses: actions/upload-artifact@v3
       with:
-        name: node-app
+        name: institution-portal-deploy
         path: release.zip
 
   deploy:
@@ -73,7 +73,7 @@ jobs:
     - name: Download artifact from build job
       uses: actions/download-artifact@v3
       with:
-        name: node-app
+        name: institution-portal-deploy
         
     - name: unzip artifact for deployment
       run: unzip release.zip
@@ -82,6 +82,6 @@ jobs:
       id: deploy-to-webapp
       uses: azure/webapps-deploy@v2
       with:
-        app-name: fe #${{ env.AZURE_WEBAPP_NAME }}
+        app-name: ${{ env.AZURE_WEBAPP_NAME }}
         publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
         package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
