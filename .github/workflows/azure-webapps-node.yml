@@ -36,6 +36,9 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: Change directory
+      run: cd fe 
+      
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
@@ -44,7 +47,6 @@ jobs:
 
     - name: npm install, build, and test
       run: |
-        cd fe
         npm install
         npm run build --if-present
        # npm run test --if-present
