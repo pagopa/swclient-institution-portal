@@ -142,7 +142,7 @@ export const Paga = () => {
       <Box sx={{ width: "100%", maxWidth: 1000 }}>
         <Grid>
           <Item sx={{ textAlign: 'left' }}>
-            <Typography variant="h4">Paga test</Typography>
+            <Typography variant="h4">Paga</Typography>
           </Item>
           <Item sx={{ textAlign: 'left' }}>
             <Typography variant="overline">Inserisci i dati di pagamento</Typography>
