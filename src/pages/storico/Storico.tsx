@@ -4,12 +4,27 @@ import { Typography, Button, FormHelperText, Box, Stack, Paper, styled, Grid, In
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import Modal from '@mui/material/Modal';
 import Chip from '@mui/material/Chip';
+import axios from 'axios';
 
+
+export interface Terminals {
+  "subscribers": [
+    Terminal
+  ]
+}
 
 export interface Terminal {
-  terminalId: string;
-  terminalLabel: string;
+  "acquirerId": string,
+  "channel": string,
+  "merchantId": string,
+  "terminalId": string,
+  "paTaxCode": string,
+  "subscriberId": string,
+  "label": string,
+  "subscriptionTimestamp": string,
+  "lastUsageTimestamp": string
 }
+
 
 export interface Row {
   id: string | number,
@@ -25,6 +40,45 @@ export interface Row {
   fee: number,
   totalAmount: number
 
+}
+
+export interface Operation {
+  "operationType": string,
+  "paTaxCode": string,
+  "subscriberId": string,
+  "noticeTaxCode": string,
+  "noticeNumber": string,
+  "presetId": string,
+  "creationTimestamp": string,
+  "status": string,
+  "statusTimestamp": string,
+  "statusDetails": {
+    "transactionId": string,
+    "acquirerId": string,
+    "channel": string,
+    "merchantId": string,
+    "terminalId": string,
+    "insertTimestamp": string,
+    "notices": [
+      {
+        "paymentToken": string,
+        "paTaxCode": string,
+        "noticeNumber": string,
+        "amount": number,
+        "description": string,
+        "company": string,
+        "office": string
+      }
+    ],
+    "totalAmount": number,
+    "fee": number,
+    "status": string
+  }
+}
+export interface TerminalHistory {
+  presets: [
+    Operation
+  ]
 }
 
 export const StatusChip = ({ status }: { status: string | undefined }) => {
@@ -66,10 +120,13 @@ export const Storico = () => {
 
   const [selectedTerminal, setSelectedTerminal] = useState("-");
   const [selectedTransaction, setSelectedTransaction] = useState<Row>();
-  const [terminals, setTerminals] = useState<Terminal[]>([]);
-  const [terminalError, setTerminalError] = useState(false);
+  const [terminals, setTerminals] = useState<Terminals | { subscribers: [] }>({
+    subscribers: []
+  }); const [terminalError, setTerminalError] = useState(false);
   const [terminalErrorHelper, setTerminalErrorHelper] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
+  const [paTaxCode, setPaTaxCode] = useState('15376371009')
+  const [terminalHistory, setTerminalHistory] = useState<TerminalHistory | null>(null)
 
   const openModal = (row: Row) => {
     setModalOpen(true);
@@ -80,77 +137,46 @@ export const Storico = () => {
 
   const [rows, setRows] = useState([{}]);
 
+  const getTerminals = async () => {
+    try {
+      const data: any = await axios.get(process.env.REACT_APP_API_ADDRESS + '/terminals/' + paTaxCode, {
+        headers: {
+          "RequestId": process.env.REACT_APP_REQUEST_ID,
+        },
+      });
+      setTerminals(data.data);
+    }
+    catch (e) {
+      console.log(e);
+    }
+  }
+
+  const getTerminalHistory = async () => {
+    if (selectedTerminal === "-") {
+      return;
+    }
+    try {
+      const selectedTerminalObject: Terminal[] = terminals.subscribers.filter(term => term.terminalId === selectedTerminal)
+
+      const data: any = await axios.get(process.env.REACT_APP_API_ADDRESS + '/terminals/' + paTaxCode + '/' + selectedTerminalObject[0]?.subscriberId, {
+        headers: {
+          "RequestId": process.env.REACT_APP_REQUEST_ID,
+        },
+      });
+      setTerminalHistory(data.data);
+    }
+    catch (e) {
+      console.log(e);
+    }
+  }
 
 
-  const apiData = [{
-    "operationType": "PAYMENT_NOTICE",
-    "paTaxCode": "15376371009",
-    "subscriberId": "x46tr3",
-    "noticeTaxCode": "15376371009",
-    "noticeNumber": "485564829563528563",
-    "presetId": "d0d654e6-97da-4848-b568-99fedccb642b",
-    "creationTimestamp": "2023-05-05T16:35:30",
-    "status": "EXECUTED",
-    "statusTimestamp": "2023-05-05T16:36:30",
-    "statusDetails": {
-      "transactionId": "517a4216840E461fB011036A0fd134E1",
-      "acquirerId": "4585625",
-      "channel": "POS",
-      "merchantId": "28405fHfk73x88D",
-      "terminalId": "0aB9wXyZ",
-      "insertTimestamp": "2023-04-11T16:20:34",
-      "notices": [
-        {
-          "paymentToken": "648fhg36s95jfg7DS",
-          "paTaxCode": "15376371009",
-          "noticeNumber": "485564829563528563",
-          "amount": 12345,
-          "description": "Health ticket for chest x-ray",
-          "company": "ASL Roma",
-          "office": "Ufficio di Roma"
-        }
-      ],
-      "totalAmount": 12395,
-      "fee": 50,
-      "status": "PRE_CLOSE"
-    }
-  }, {
-    "operationType": "PAYMENT_NOTICE",
-    "paTaxCode": "15376371009",
-    "subscriberId": "x46tr3",
-    "noticeTaxCode": "15376371009",
-    "noticeNumber": "485564829563528563",
-    "presetId": "d0d654e6-97da-4848-b568-99fedccb642b",
-    "creationTimestamp": "2023-05-05T16:35:30",
-    "status": "EXECUTED",
-    "statusTimestamp": "2023-05-05T16:36:30",
-    "statusDetails": {
-      "transactionId": "517a4216840E461fB011036A0fd134E1",
-      "acquirerId": "4585625",
-      "channel": "POS",
-      "merchantId": "28405fHfk73x88D",
-      "terminalId": "0aB9wXyZ",
-      "insertTimestamp": "2023-04-11T16:20:34",
-      "notices": [
-        {
-          "paymentToken": "648fhg36s95jfg7DS",
-          "paTaxCode": "15376371009",
-          "noticeNumber": "485564829563528563",
-          "amount": 12345,
-          "description": "Health ticket for chest x-ray",
-          "company": "ASL Roma",
-          "office": "Ufficio di Roma"
-        }
-      ],
-      "totalAmount": 12395,
-      "fee": 50,
-      "status": "PRE_CLOSE"
-    }
-  }];
+
+
 
   useEffect(() => {
     let row: Row[] = [];
-    apiData.map((element, index) => {
+    terminalHistory?.presets?.map((element, index) => {
       row.push({
         id: index,
         transactionId: element.statusDetails.transactionId,
@@ -168,7 +194,7 @@ export const Storico = () => {
     })
 
     setRows(row);
-  }, [apiData])
+  }, [terminalHistory])
 
 
   const columns: GridColDef[] = [
@@ -192,12 +218,31 @@ export const Storico = () => {
     }
   ];
 
-  useEffect(() => { }, [selectedTerminal]) //TODO: Compplete when the API is ready
+  useEffect(() => {
+    getTerminalHistory();
+  }, [selectedTerminal])
 
   useEffect(() => {
-    setTerminals([{ terminalLabel: "Reception POS", terminalId: "DXA0132" },
-    { terminalLabel: "Room A POS", terminalId: "DXB0132" },
-    { terminalLabel: "Room B POS", terminalId: "DXC0132" }])
+    if (process.env.REACT_APP_IS_USING_MOCK === "true") {
+      setTerminals({
+        subscribers: [
+          {
+            "acquirerId": "4585625",
+            "channel": "POS",
+            "merchantId": "28405fHfk73x88D",
+            "terminalId": "0aB9wXyZ",
+            "paTaxCode": "15376371009",
+            "subscriberId": "x46tr3",
+            "label": "Reception POS",
+            "subscriptionTimestamp": "2023-05-05T09:31:33",
+            "lastUsageTimestamp": "2023-05-08T10:55:57"
+          }
+        ]
+      })
+    }
+    else {
+      getTerminals();
+    }
   }, [])
 
   const Item = styled(Paper)(({ theme }) => ({
@@ -307,16 +352,16 @@ export const Storico = () => {
             >
               <MenuItem disabled value={"-"}>Scegli un terminale</MenuItem>
               {
-                terminals.map((term, index) => {
+                terminals.subscribers.map((term, index: number) => {
                   return (
-                    <MenuItem value={term.terminalId} key={index}>{term.terminalLabel}</MenuItem>
+                    <MenuItem value={term.terminalId} key={index}>{term.label}</MenuItem>
                   )
                 })
               }
             </Select>
             <FormHelperText error>{terminalErrorHelper}</FormHelperText>
           </FormControl>
-          {selectedTerminal !== "-" ?
+          {selectedTerminal !== "-" && terminalHistory?.presets ?
             <DataGrid
               rows={rows}
               columns={columns}
@@ -336,6 +381,10 @@ export const Storico = () => {
               pageSizeOptions={[5, 10]}
             />
             : ''}
+          {
+            selectedTerminal !== "-" && !terminalHistory?.presets ?
+              <div style={{ marginTop: "4vh" }}>Non risultano ancora operazioni per il terminale selezionato</div> : ''
+          }
         </Stack>
       </Box>
     </Container>

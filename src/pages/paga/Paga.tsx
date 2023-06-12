@@ -64,12 +64,17 @@ export const Paga = () => {
   }, [])
 
   const getTerminals = async () => {
-    const data: any = await axios.get(process.env.REACT_APP_API_ADDRESS + '/terminals/' + taxCode, {
-      headers: {
-        "RequestId": process.env.REACT_APP_REQUEST_ID,
-      },
-    });
-    setTerminals(data.data);
+    try {
+      const data: any = await axios.get(process.env.REACT_APP_API_ADDRESS + '/terminals/' + taxCode, {
+        headers: {
+          "RequestId": process.env.REACT_APP_REQUEST_ID,
+        },
+      });
+      setTerminals(data.data);
+    }
+    catch (e) {
+      console.log(e);
+    }
   }
 
   const Item = styled(Paper)(({ theme }) => ({
