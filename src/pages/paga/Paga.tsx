@@ -29,6 +29,7 @@ export const Paga = () => {
     subscribers: []
   });
   const [paymentNoticeNumber, setPaymentNoticeNumber] = useState("");
+  const [noticeTaxCode, setNoticeTaxCode] = useState("");
   const [taxCode, setTaxCode] = useState("15376371009");
   const [paymentNoticeNumberError, setPaymentNoticeNumberError] = useState(false);
   const [paymentNoticeNumberHelper, setPaymentNoticeNumberHelper] = useState("");
@@ -109,7 +110,7 @@ export const Paga = () => {
         if (!reg.test(value)) {
           return;
         }
-        setTaxCode(value);
+        setNoticeTaxCode(value);
         if (value === "") {
           setTaxCodeError(true);
           setTaxCodeErrorHelper("Campo obbligatorio")
@@ -155,11 +156,11 @@ export const Paga = () => {
       setPaymentNoticeNumberHelper("Inserire 18 cifre");
     }
 
-    if (taxCode === "") {
+    if (noticeTaxCode === "") {
       setTaxCodeError(true);
       setTaxCodeErrorHelper("Campo obbligatorio")
     }
-    else if (taxCode.length !== 11) {
+    else if (noticeTaxCode.length !== 11) {
       setTaxCodeError(true);
       setTaxCodeErrorHelper("Inserire 11 cifre")
     }
@@ -167,10 +168,23 @@ export const Paga = () => {
     if (selectedTerminal === "-") {
       setTerminalError(true);
       setTerminalErrorHelper("Campo obbligatorio")
+      return;
+
     }
 
     if (terminalError || taxCodeError || paymentNoticeNumberError) {
       return;
+    }
+    else {
+      const selectedTerminalObject: Terminal[] = terminals.subscribers.filter(term => term.terminalId === selectedTerminal)
+
+      axios.post(process.env.REACT_APP_API_ADDRESS + '/presets', {
+        "operationType": "PAYMENT_NOTICE",
+        "paTaxCode": taxCode,
+        "subscriberId": selectedTerminalObject[0]?.subscriberId,
+        "noticeTaxCode": noticeTaxCode,
+        "noticeNumber": paymentNoticeNumber,
+      }, { headers: { 'RequestId': process.env.REACT_APP_REQUEST_ID } })
     }
   }
 
@@ -208,7 +222,7 @@ export const Paga = () => {
             label="Codice ente"
             variant="outlined"
             onChange={onChange}
-            value={taxCode}
+            value={noticeTaxCode}
             error={taxCodeError}
             helperText={taxCodeHelper}
             required />
