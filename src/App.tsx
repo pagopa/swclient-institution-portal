@@ -23,6 +23,7 @@ import PaymentsIcon from '@mui/icons-material/Payments';
 import TabletAndroidIcon from '@mui/icons-material/TabletAndroid';
 import HistoryIcon from '@mui/icons-material/History';
 
+
 function App() {
 	const getRoutePath = (location: any, params: Params): string => {
 		const { pathname } = location;
@@ -83,7 +84,7 @@ function App() {
 						ariaLabel: 'home',
 						title: 'ASL Roma 2',
 					}}
-					onAssistanceClick={() => {}}
+					onAssistanceClick={() => { }}
 					loggedUser={{
 						id: 'string',
 						name: 'Mario',
@@ -96,7 +97,7 @@ function App() {
 							id: 'string',
 							icon: null,
 							label: 'Configurazione',
-							onClick: () => {},
+							onClick: () => { },
 						},
 					]}
 				/>
@@ -123,14 +124,14 @@ function App() {
 						companyLink={{ href: 'test', ariaLabel: 'Company Link' }}
 						currentLangCode={undefined}
 						languages={{ it: { it: 'Italiano' } }}
-						onLanguageChanged={() => {}}
+						onLanguageChanged={() => { }}
 						postLoginLinks={[
 							{
 								label: '',
 								href: 'string',
 								ariaLabel: 'POSTLOG',
 								linkType: 'internal',
-								onClick: () => {},
+								onClick: () => { },
 							},
 						]}
 						preLoginLinks={{
@@ -140,7 +141,7 @@ function App() {
 										label: 'About us',
 										ariaLabel: 'string',
 										linkType: 'internal',
-										onClick: () => {},
+										onClick: () => { },
 									},
 								],
 							},
@@ -151,7 +152,7 @@ function App() {
 										label: 'Resources',
 										ariaLabel: 'string',
 										linkType: 'internal',
-										onClick: () => {},
+										onClick: () => { },
 									},
 								],
 							},
@@ -166,7 +167,7 @@ function App() {
 										title: 'Social',
 										ariaLabel: 'Social',
 										/** if defined it will override the href behavior */
-										onClick: () => {},
+										onClick: () => { },
 									},
 								],
 								links: [
@@ -174,7 +175,7 @@ function App() {
 										label: 'string',
 										ariaLabel: 'string',
 										linkType: 'internal',
-										onClick: () => {},
+										onClick: () => { },
 									},
 								],
 							},

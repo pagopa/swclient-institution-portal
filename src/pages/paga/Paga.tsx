@@ -1,19 +1,35 @@
 import React, { ChangeEventHandler, useEffect, useState } from 'react';
 
 import { Typography, FormHelperText, Box, Stack, Paper, styled, TextField, Grid, InputLabel, Select, MenuItem, FormControl, Container, Button, SelectChangeEvent } from '@mui/material';
+import axios from 'axios';
 
+
+export interface Terminals {
+  "subscribers": [
+    Terminal
+  ]
+}
 
 export interface Terminal {
-  terminalId: string;
-  terminalLabel: string;
+  "acquirerId": string,
+  "channel": string,
+  "merchantId": string,
+  "terminalId": string,
+  "paTaxCode": string,
+  "subscriberId": string,
+  "label": string,
+  "subscriptionTimestamp": string,
+  "lastUsageTimestamp": string
 }
 
 export const Paga = () => {
 
   const [selectedTerminal, setSelectedTerminal] = useState("-");
-  const [terminals, setTerminals] = useState<Terminal[]>([]);
+  const [terminals, setTerminals] = useState<Terminals | { subscribers: [] }>({
+    subscribers: []
+  });
   const [paymentNoticeNumber, setPaymentNoticeNumber] = useState("");
-  const [taxCode, setTaxCode] = useState("");
+  const [taxCode, setTaxCode] = useState("15376371009");
   const [paymentNoticeNumberError, setPaymentNoticeNumberError] = useState(false);
   const [paymentNoticeNumberHelper, setPaymentNoticeNumberHelper] = useState("");
   const [taxCodeError, setTaxCodeError] = useState(false);
@@ -24,10 +40,36 @@ export const Paga = () => {
   const validateTaxCode = new RegExp("[0-9]{11}");
 
   useEffect(() => {
-    setTerminals([{ terminalLabel: "Reception POS", terminalId: "DXA0132" },
-    { terminalLabel: "Room A POS", terminalId: "DXB0132" },
-    { terminalLabel: "Room B POS", terminalId: "DXC0132" }])
+    if (process.env.REACT_APP_IS_USING_MOCK === "true") {
+      setTerminals({
+        subscribers: [
+          {
+            "acquirerId": "4585625",
+            "channel": "POS",
+            "merchantId": "28405fHfk73x88D",
+            "terminalId": "0aB9wXyZ",
+            "paTaxCode": "15376371009",
+            "subscriberId": "x46tr3",
+            "label": "Reception POS",
+            "subscriptionTimestamp": "2023-05-05T09:31:33",
+            "lastUsageTimestamp": "2023-05-08T10:55:57"
+          }
+        ]
+      })
+    }
+    else {
+      getTerminals();
+    }
   }, [])
+
+  const getTerminals = async () => {
+    const data: any = await axios.get(process.env.REACT_APP_API_ADDRESS + '/terminals/' + taxCode, {
+      headers: {
+        "RequestId": process.env.REACT_APP_REQUEST_ID,
+      },
+    });
+    setTerminals(data.data);
+  }
 
   const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -40,10 +82,6 @@ export const Paga = () => {
   const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const name = e.target.name;
     const value = e.target.value;
-    // const reg = new RegExp("");
-    // if (!reg.test(value)) {
-    // return;
-    //}
     let reg;
     switch (name) {
       case "noticeNumber":
@@ -187,9 +225,9 @@ export const Paga = () => {
             >
               <MenuItem disabled value={"-"}>Scegli un terminale...</MenuItem>
               {
-                terminals.map((term, index) => {
+                terminals.subscribers?.map((term: Terminal, index: number) => {
                   return (
-                    <MenuItem value={term.terminalId}>{term.terminalLabel}</MenuItem>
+                    <MenuItem value={term.terminalId}>{term.label}</MenuItem>
                   )
                 })
               }
