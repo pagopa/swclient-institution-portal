@@ -3,6 +3,7 @@ import { theme } from "@pagopa/mui-italia";
 import { Typography, Box, Stack, Paper, styled, Grid, Container } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import DeleteIcon from '@mui/icons-material/DeleteForever';
+import axios from 'axios';
 
 const columns: GridColDef[] = [
   { field: 'terminalId', headerName: 'POS', type: 'string', width: 200, sortable: true },
@@ -16,28 +17,81 @@ const columns: GridColDef[] = [
   }
 ];
 
-const d = new Date(2021, 11, 11);
-const rows = [
-  { id: 1, terminalId: 'DXA', label: "Term1", lastOperation: d, },
-  { id: 2, terminalId: 'DXB', label: "Term3", lastOperation: d, },
-  { id: 3, terminalId: 'DXC', label: "Term4", lastOperation: d, },
-];
 
+
+export interface Terminals {
+  "subscribers": [
+    Terminal
+  ]
+}
 
 export interface Terminal {
-  terminalId: string;
-  terminalLabel: string;
+  "acquirerId": string,
+  "channel": string,
+  "merchantId": string,
+  "terminalId": string,
+  "paTaxCode": string,
+  "subscriberId": string,
+  "label": string,
+  "subscriptionTimestamp": string,
+  "lastUsageTimestamp": string
 }
+
 
 export const Dispositivi = () => {
 
-  const [terminals, setTerminals] = useState<Terminal[]>([]);
+  const [rows, setRows] = useState([]);
+  const [paTaxCode, setPaTaxCode] = useState("15376371009");
+  const [terminals, setTerminals] = useState<Terminals | { subscribers: [] }>({
+    subscribers: []
+  });
+  const getTerminals = async () => {
+    try {
+      const data: any = await axios.get(process.env.REACT_APP_API_ADDRESS + '/terminals/' + paTaxCode, {
+        headers: {
+          "RequestId": process.env.REACT_APP_REQUEST_ID,
+        },
+      });
+      setTerminals(data.data);
+    }
+    catch (e) {
+      console.log(e);
+    }
+  }
+
+  useEffect(() => {
+    let r: any = [];
+    terminals.subscribers.map((t, i) => {
+      r.push({ id: i, terminalId: t.terminalId, label: t.label, lastOperation: new Date(t.lastUsageTimestamp), },
+      )
+    })
+
+    console.log(r);
+    setRows(r);
+  }, [terminals])
 
 
   useEffect(() => {
-    setTerminals([{ terminalLabel: "Reception POS", terminalId: "DXA0132" },
-    { terminalLabel: "Room A POS", terminalId: "DXB0132" },
-    { terminalLabel: "Room B POS", terminalId: "DXC0132" }])
+    if (process.env.REACT_APP_IS_USING_MOCK === "true") {
+      setTerminals({
+        subscribers: [
+          {
+            "acquirerId": "4585625",
+            "channel": "POS",
+            "merchantId": "28405fHfk73x88D",
+            "terminalId": "0aB9wXyZ",
+            "paTaxCode": "15376371009",
+            "subscriberId": "x46tr3",
+            "label": "Reception POS",
+            "subscriptionTimestamp": "2023-05-05T09:31:33",
+            "lastUsageTimestamp": "2023-05-08T10:55:57"
+          }
+        ]
+      })
+    }
+    else {
+      getTerminals();
+    }
   }, [])
 
   const Item = styled(Paper)(({ theme }) => ({
@@ -57,7 +111,7 @@ export const Dispositivi = () => {
           </Item>
         </Grid>
         <Stack spacing={6} style={{ marginTop: "2vh" }} >
-          <DataGrid
+          {rows.length > 0 ? <DataGrid
             rows={rows}
             columns={columns}
             initialState={{
@@ -72,7 +126,7 @@ export const Dispositivi = () => {
                 color: 'primary.main',
               }
             }}
-          />        </Stack>
+          /> : ''}    </Stack>
       </Box>
     </Container>
 

@@ -122,7 +122,8 @@ export const Storico = () => {
   const [selectedTransaction, setSelectedTransaction] = useState<Row>();
   const [terminals, setTerminals] = useState<Terminals | { subscribers: [] }>({
     subscribers: []
-  }); const [terminalError, setTerminalError] = useState(false);
+  });
+  const [terminalError, setTerminalError] = useState(false);
   const [terminalErrorHelper, setTerminalErrorHelper] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [paTaxCode, setPaTaxCode] = useState('15376371009')
@@ -147,7 +148,6 @@ export const Storico = () => {
       setTerminals(data.data);
     }
     catch (e) {
-      console.log(e);
     }
   }
 

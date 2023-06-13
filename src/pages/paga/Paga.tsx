@@ -30,7 +30,7 @@ export const Paga = () => {
   });
   const [paymentNoticeNumber, setPaymentNoticeNumber] = useState("");
   const [noticeTaxCode, setNoticeTaxCode] = useState("");
-  const [taxCode, setTaxCode] = useState("15376371009");
+  const [paTaxCode, setPaTaxCode] = useState("15376371009");
   const [paymentNoticeNumberError, setPaymentNoticeNumberError] = useState(false);
   const [paymentNoticeNumberHelper, setPaymentNoticeNumberHelper] = useState("");
   const [taxCodeError, setTaxCodeError] = useState(false);
@@ -65,7 +65,7 @@ export const Paga = () => {
 
   const getTerminals = async () => {
     try {
-      const data: any = await axios.get(process.env.REACT_APP_API_ADDRESS + '/terminals/' + taxCode, {
+      const data: any = await axios.get(process.env.REACT_APP_API_ADDRESS + '/terminals/' + paTaxCode, {
         headers: {
           "RequestId": process.env.REACT_APP_REQUEST_ID,
         },
@@ -73,7 +73,6 @@ export const Paga = () => {
       setTerminals(data.data);
     }
     catch (e) {
-      console.log(e);
     }
   }
 
@@ -185,7 +184,7 @@ export const Paga = () => {
 
       axios.post(process.env.REACT_APP_API_ADDRESS + '/presets', {
         "operationType": "PAYMENT_NOTICE",
-        "paTaxCode": taxCode,
+        "paTaxCode": paTaxCode,
         "subscriberId": selectedTerminalObject[0]?.subscriberId,
         "noticeTaxCode": noticeTaxCode,
         "noticeNumber": paymentNoticeNumber,
