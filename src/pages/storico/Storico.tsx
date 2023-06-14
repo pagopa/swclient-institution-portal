@@ -210,7 +210,6 @@ export const Storico = () => {
 
 	useEffect(() => {
 		let row: Row[] = [];
-		console.log(terminalHistory);
 		terminalHistory?.presets?.map((element, index) => {
 			row.push({
 				id: index,
