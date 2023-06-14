@@ -4,7 +4,7 @@ import Snackbar from '@mui/material/Snackbar';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import { Alert, AlertColor } from '@mui/material';
-
+import { theme } from '@pagopa/mui-italia';
 export default function SimpleSnackbar({
 	status,
 	open,
@@ -48,7 +48,17 @@ export default function SimpleSnackbar({
 				onClose={handleClose}
 				action={action}
 			>
-				<Alert severity={status}>{message}</Alert>
+				<Alert
+					sx={{
+						background:
+							status === 'success'
+								? theme.palette.success.main
+								: theme.palette.error.main,
+					}}
+					severity={status}
+				>
+					{message}
+				</Alert>
 			</Snackbar>
 		</div>
 	);

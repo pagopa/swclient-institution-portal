@@ -60,7 +60,7 @@ export const Dispositivi = () => {
 		{
 			field: 'lastOperation',
 			headerName: 'Data ultima operazione',
-			width: 130,
+			width: 180,
 			type: 'string',
 		},
 		{
