@@ -18,7 +18,7 @@ import {
 	SelectChangeEvent,
 } from '@mui/material';
 import axios from 'axios';
-
+import LoadingSpinner from '../../components/LoadingSpinner';
 export interface Terminals {
 	subscribers: [Terminal];
 }
@@ -55,6 +55,7 @@ export const Paga = () => {
 	const [toastStatus, setToastStatus] = useState('');
 	const [toastMessage, setToastMessage] = useState('');
 	const validateTaxCode = new RegExp('[0-9]{11}');
+	const [isFetching, setIsFetching] = useState(false);
 
 	useEffect(() => {
 		if (process.env.REACT_APP_IS_USING_MOCK === 'true') {
@@ -80,6 +81,7 @@ export const Paga = () => {
 
 	const getTerminals = async () => {
 		try {
+			setIsFetching(true);
 			const data: any = await axios.get(
 				process.env.REACT_APP_API_ADDRESS + '/terminals/' + paTaxCode,
 				{
@@ -89,7 +91,12 @@ export const Paga = () => {
 				}
 			);
 			setTerminals(data.data);
-		} catch (e) {}
+		} catch (e) {
+			console.log(e);
+		}
+		setTimeout(() => {
+			setIsFetching(false);
+		}, 500);
 	};
 
 	const Item = styled(Paper)(({ theme }) => ({
@@ -191,6 +198,7 @@ export const Paga = () => {
 			);
 
 			try {
+				setIsFetching(true);
 				const res = await axios.post(
 					process.env.REACT_APP_API_ADDRESS + '/presets',
 					{
@@ -219,103 +227,109 @@ export const Paga = () => {
 				setToastStatus('error');
 				setToastMessage('Pagamento non riuscito!');
 			}
+			setTimeout(() => {
+				setIsFetching(false);
+			}, 500);
 		}
 	};
 
 	return (
-		<Container>
-			{toastStatus === 'success' ? (
-				<Snackbar
-					status={'success'}
-					message={toastMessage}
-					open={toastActive}
-					setOpen={setToastActive}
-				/>
-			) : (
-				''
-			)}
-			{toastStatus === 'error' ? (
-				<Snackbar
-					status={'error'}
-					message={toastMessage}
-					open={toastActive}
-					setOpen={setToastActive}
-				/>
-			) : (
-				''
-			)}
-			<Box sx={{ width: '100%', maxWidth: 1000 }}>
-				<Grid>
-					<Item sx={{ textAlign: 'left' }}>
-						<Typography variant="h4">Paga</Typography>
-					</Item>
-					<Item sx={{ textAlign: 'left' }}>
-						<Typography variant="overline">
-							Inserisci i dati di pagamento
-						</Typography>
-					</Item>
-				</Grid>
-				<Stack spacing={6}>
-					<TextField
-						type="text"
-						sx={{ width: '30vw' }}
-						id="noticeNumber"
-						name="noticeNumber"
-						label="Numero avviso"
-						variant="outlined"
-						value={paymentNoticeNumber}
-						onChange={onChange}
-						error={paymentNoticeNumberError}
-						helperText={paymentNoticeNumberHelper}
-						required
+		<>
+			{isFetching ? <LoadingSpinner /> : ''}
+			<Container>
+				{toastStatus === 'success' ? (
+					<Snackbar
+						status={'success'}
+						message={toastMessage}
+						open={toastActive}
+						setOpen={setToastActive}
 					/>
-					<TextField
-						type="text"
-						sx={{ width: '30vw' }}
-						id="taxCode"
-						name="taxCode"
-						label="Codice ente"
-						variant="outlined"
-						onChange={onChange}
-						value={noticeTaxCode}
-						error={taxCodeError}
-						helperText={taxCodeHelper}
-						required
+				) : (
+					''
+				)}
+				{toastStatus === 'error' ? (
+					<Snackbar
+						status={'error'}
+						message={toastMessage}
+						open={toastActive}
+						setOpen={setToastActive}
 					/>
-					<FormControl sx={{ width: '30vw' }}>
-						<InputLabel id="terminal" error={terminalError}>
-							Terminale
-						</InputLabel>
-						<Select
-							labelId="terminal"
-							id="terminal"
-							name="terminal"
-							value={selectedTerminal}
-							label="Terminale"
-							onChange={onChangeSelect}
-							error={terminalError}
+				) : (
+					''
+				)}
+				<Box sx={{ width: '100%', maxWidth: 1000 }}>
+					<Grid>
+						<Item sx={{ textAlign: 'left' }}>
+							<Typography variant="h4">Paga</Typography>
+						</Item>
+						<Item sx={{ textAlign: 'left' }}>
+							<Typography variant="overline">
+								Inserisci i dati di pagamento
+							</Typography>
+						</Item>
+					</Grid>
+					<Stack spacing={6}>
+						<TextField
+							type="text"
+							sx={{ width: '30vw' }}
+							id="noticeNumber"
+							name="noticeNumber"
+							label="Numero avviso"
+							variant="outlined"
+							value={paymentNoticeNumber}
+							onChange={onChange}
+							error={paymentNoticeNumberError}
+							helperText={paymentNoticeNumberHelper}
+							required
+						/>
+						<TextField
+							type="text"
+							sx={{ width: '30vw' }}
+							id="taxCode"
+							name="taxCode"
+							label="Codice ente"
+							variant="outlined"
+							onChange={onChange}
+							value={noticeTaxCode}
+							error={taxCodeError}
+							helperText={taxCodeHelper}
+							required
+						/>
+						<FormControl sx={{ width: '30vw' }}>
+							<InputLabel id="terminal" error={terminalError}>
+								Terminale
+							</InputLabel>
+							<Select
+								labelId="terminal"
+								id="terminal"
+								name="terminal"
+								value={selectedTerminal}
+								label="Terminale"
+								onChange={onChangeSelect}
+								error={terminalError}
+							>
+								<MenuItem disabled value={'-'}>
+									Scegli un terminale...
+								</MenuItem>
+								{terminals.subscribers?.map((term: Terminal, index: number) => {
+									return (
+										<MenuItem value={term.terminalId}>{term.label}</MenuItem>
+									);
+								})}
+							</Select>
+							<FormHelperText error>{terminalErrorHelper}</FormHelperText>
+						</FormControl>
+						<Button
+							variant="contained"
+							onClick={activatePayment}
+							sx={{ width: '30vw' }}
 						>
-							<MenuItem disabled value={'-'}>
-								Scegli un terminale...
-							</MenuItem>
-							{terminals.subscribers?.map((term: Terminal, index: number) => {
-								return (
-									<MenuItem value={term.terminalId}>{term.label}</MenuItem>
-								);
-							})}
-						</Select>
-						<FormHelperText error>{terminalErrorHelper}</FormHelperText>
-					</FormControl>
-					<Button
-						variant="contained"
-						onClick={activatePayment}
-						sx={{ width: '30vw' }}
-					>
-						Attiva pagamento{' '}
-					</Button>
-				</Stack>
-			</Box>
-		</Container>
+							Attiva pagamento{' '}
+						</Button>
+					</Stack>
+				</Box>
+			</Container>
+		</>
 	);
 };
 

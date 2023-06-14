@@ -26,6 +26,7 @@ import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import Modal from '@mui/material/Modal';
 import Chip from '@mui/material/Chip';
 import axios from 'axios';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 export interface Terminals {
 	subscribers: [Terminal];
@@ -139,6 +140,7 @@ export const Storico = () => {
 	const [terminalErrorHelper, setTerminalErrorHelper] = useState('');
 	const [modalOpen, setModalOpen] = useState(false);
 	const [paTaxCode, setPaTaxCode] = useState('15376371009');
+	const [isFetching, setIsFetching] = useState(true);
 	const [terminalHistory, setTerminalHistory] =
 		useState<TerminalHistory | null>(null);
 
@@ -151,6 +153,7 @@ export const Storico = () => {
 
 	const getTerminals = async () => {
 		try {
+			setIsFetching(true);
 			const data: any = await axios.get(
 				process.env.REACT_APP_API_ADDRESS + '/terminals/' + paTaxCode,
 				{
@@ -160,7 +163,12 @@ export const Storico = () => {
 				}
 			);
 			setTerminals(data.data);
-		} catch (e) {}
+		} catch (e) {
+			console.log(e);
+		}
+		setTimeout(() => {
+			setIsFetching(false);
+		}, 500);
 	};
 
 	const getTerminalHistory = async () => {
@@ -171,7 +179,7 @@ export const Storico = () => {
 			const selectedTerminalObject: Terminal[] = terminals.subscribers.filter(
 				(term) => term.terminalId === selectedTerminal
 			);
-
+			setIsFetching(true);
 			const data: any = await axios.get(
 				process.env.REACT_APP_API_ADDRESS +
 					'/terminals/' +
@@ -188,6 +196,9 @@ export const Storico = () => {
 		} catch (e) {
 			console.log(e);
 		}
+		setTimeout(() => {
+			setIsFetching(false);
+		}, 500);
 	};
 
 	useEffect(() => {
@@ -308,156 +319,161 @@ export const Storico = () => {
 	};
 
 	return (
-		<Container>
-			<Box sx={{ width: '100%', maxWidth: 1000 }}>
-				{modalOpen ? (
-					<Modal
-						open={modalOpen}
-						onClose={() => {
-							setModalOpen(false);
-						}}
-						aria-labelledby="child-modal-title"
-						aria-describedby="child-modal-description"
-					>
-						<Box
-							sx={{
-								position: 'absolute' as 'absolute',
-								top: '50%',
-								left: '50%',
-								borderRadius: '1%',
-								transform: 'translate(-50%, -50%)',
-								width: 600,
-								bgcolor: 'background.paper',
-								boxShadow: 24,
-								p: 4,
+		<>
+			{isFetching ? <LoadingSpinner /> : ''}
+			<Container>
+				<Box sx={{ width: '100%', maxWidth: 1000 }}>
+					{modalOpen ? (
+						<Modal
+							open={modalOpen}
+							onClose={() => {
+								setModalOpen(false);
 							}}
+							aria-labelledby="child-modal-title"
+							aria-describedby="child-modal-description"
 						>
-							<Typography id="modal-modal-title" variant="h6" component="h2">
-								Dettagli transazione
-							</Typography>
-							<Stack>
-								<Typography id="modal-modal-description" sx={{ mt: 2 }}>
-									<b>Data: </b>{' '}
-									{selectedTransaction?.statusTimestamp?.getDay() +
-										' ' +
-										selectedTransaction?.statusTimestamp?.toLocaleString(
-											'default',
-											{ month: 'long' }
-										) +
-										' ' +
-										selectedTransaction?.statusTimestamp?.getFullYear() +
-										', ' +
-										selectedTransaction?.statusTimestamp?.getHours() +
-										':' +
-										selectedTransaction?.statusTimestamp?.getMinutes()}
+							<Box
+								sx={{
+									position: 'absolute' as 'absolute',
+									top: '50%',
+									left: '50%',
+									borderRadius: '1%',
+									transform: 'translate(-50%, -50%)',
+									width: 600,
+									bgcolor: 'background.paper',
+									boxShadow: 24,
+									p: 4,
+								}}
+							>
+								<Typography id="modal-modal-title" variant="h6" component="h2">
+									Dettagli transazione
 								</Typography>
-								<Typography id="modal-modal-description" sx={{ mt: 2 }}>
-									<b>Id transazione: </b> {selectedTransaction?.transactionId}
-								</Typography>
-								<Typography id="modal-modal-description" sx={{ mt: 2 }}>
-									<b>Codice avviso: </b>
-									{selectedTransaction?.noticeNumber.slice(0, 4) +
-										' ' +
-										selectedTransaction?.noticeNumber.slice(4, 8) +
-										' ' +
-										selectedTransaction?.noticeNumber.slice(8, 12) +
-										' ' +
-										selectedTransaction?.noticeNumber.slice(12, 16) +
-										' ' +
-										selectedTransaction?.noticeNumber.slice(16, 18)}
-								</Typography>
-								<Typography id="modal-modal-description" sx={{ mt: 2 }}>
-									<b>Descrizione: </b> {selectedTransaction?.description}
-								</Typography>
-								<Typography id="modal-modal-description" sx={{ mt: 2 }}>
-									<b>Ente: </b> {selectedTransaction?.company}
-								</Typography>
-								<Typography id="modal-modal-description" sx={{ mt: 2 }}>
-									<b>Ufficio: </b> {selectedTransaction?.office}
-								</Typography>
-								<Typography id="modal-modal-description" sx={{ mt: 2 }}>
-									<b>Commissione: </b> {selectedTransaction?.fee.toFixed(2)} €
-								</Typography>
-								<Typography id="modal-modal-description" sx={{ mt: 2 }}>
-									<b>Ammontare totale: </b>{' '}
-									{selectedTransaction?.totalAmount.toFixed(2)} €
-								</Typography>
-								<Typography id="modal-modal-description" sx={{ mt: 2 }}>
-									<b>Stato: </b>{' '}
-									{<StatusChip status={selectedTransaction?.status} />}
-								</Typography>
-							</Stack>
-						</Box>
-					</Modal>
-				) : (
-					''
-				)}
-				<Grid>
-					<Item sx={{ textAlign: 'left' }}>
-						<Typography variant="h4">Storico</Typography>
-					</Item>
-				</Grid>
-				<Stack spacing={6} style={{ marginTop: '2vh' }}>
-					<FormControl sx={{ width: '30vw', marginBottom: '2.5vh' }}>
-						<InputLabel id="terminal" error={terminalError}>
-							Terminale
-						</InputLabel>
-						<Select
-							labelId="terminal"
-							id="terminal"
-							name="terminal"
-							value={selectedTerminal}
-							label="Terminale"
-							onChange={onChangeSelect}
-							error={terminalError}
-						>
-							<MenuItem disabled value={'-'}>
-								Scegli un terminale
-							</MenuItem>
-							{terminals.subscribers.map((term, index: number) => {
-								return (
-									<MenuItem value={term.terminalId} key={index}>
-										{term.label}
-									</MenuItem>
-								);
-							})}
-						</Select>
-						<FormHelperText error>{terminalErrorHelper}</FormHelperText>
-					</FormControl>
-					{selectedTerminal !== '-' && terminalHistory?.presets ? (
-						<DataGrid
-							rows={rows}
-							columns={columns}
-							initialState={{
-								pagination: {
-									paginationModel: { page: 0, pageSize: 5 },
-								},
-							}}
-							sx={{
-								borderColor: 'divider',
-								'& .MuiDataGrid-cell:hover': {
-									color: 'primary.main',
-								},
-								marginLeft: '-8.75vw !important',
-								width: '60vw',
-							}}
-							pageSizeOptions={[5, 10]}
-						/>
+								<Stack>
+									<Typography id="modal-modal-description" sx={{ mt: 2 }}>
+										<b>Data: </b>{' '}
+										{selectedTransaction?.statusTimestamp?.getDay() +
+											' ' +
+											selectedTransaction?.statusTimestamp?.toLocaleString(
+												'default',
+												{ month: 'long' }
+											) +
+											' ' +
+											selectedTransaction?.statusTimestamp?.getFullYear() +
+											', ' +
+											selectedTransaction?.statusTimestamp?.getHours() +
+											':' +
+											selectedTransaction?.statusTimestamp?.getMinutes()}
+									</Typography>
+									<Typography id="modal-modal-description" sx={{ mt: 2 }}>
+										<b>Id transazione: </b> {selectedTransaction?.transactionId}
+									</Typography>
+									<Typography id="modal-modal-description" sx={{ mt: 2 }}>
+										<b>Codice avviso: </b>
+										{selectedTransaction?.noticeNumber.slice(0, 4) +
+											' ' +
+											selectedTransaction?.noticeNumber.slice(4, 8) +
+											' ' +
+											selectedTransaction?.noticeNumber.slice(8, 12) +
+											' ' +
+											selectedTransaction?.noticeNumber.slice(12, 16) +
+											' ' +
+											selectedTransaction?.noticeNumber.slice(16, 18)}
+									</Typography>
+									<Typography id="modal-modal-description" sx={{ mt: 2 }}>
+										<b>Descrizione: </b> {selectedTransaction?.description}
+									</Typography>
+									<Typography id="modal-modal-description" sx={{ mt: 2 }}>
+										<b>Ente: </b> {selectedTransaction?.company}
+									</Typography>
+									<Typography id="modal-modal-description" sx={{ mt: 2 }}>
+										<b>Ufficio: </b> {selectedTransaction?.office}
+									</Typography>
+									<Typography id="modal-modal-description" sx={{ mt: 2 }}>
+										<b>Commissione: </b> {selectedTransaction?.fee.toFixed(2)} €
+									</Typography>
+									<Typography id="modal-modal-description" sx={{ mt: 2 }}>
+										<b>Ammontare totale: </b>{' '}
+										{selectedTransaction?.totalAmount.toFixed(2)} €
+									</Typography>
+									<Typography id="modal-modal-description" sx={{ mt: 2 }}>
+										<b>Stato: </b>{' '}
+										{<StatusChip status={selectedTransaction?.status} />}
+									</Typography>
+								</Stack>
+							</Box>
+						</Modal>
 					) : (
 						''
 					)}
-					{selectedTerminal !== '-' && !terminalHistory?.presets ? (
-						<div style={{ marginTop: '4vh' }}>
-							<Typography variant="subtitle1">
-								Non risultano ancora operazioni per il terminale selezionato
-							</Typography>
-						</div>
-					) : (
-						''
-					)}
-				</Stack>
-			</Box>
-		</Container>
+					<Grid>
+						<Item sx={{ textAlign: 'left' }}>
+							<Typography variant="h4">Storico</Typography>
+						</Item>
+					</Grid>
+					<Stack spacing={6} style={{ marginTop: '2vh' }}>
+						<FormControl sx={{ width: '30vw', marginBottom: '2.5vh' }}>
+							<InputLabel id="terminal" error={terminalError}>
+								Terminale
+							</InputLabel>
+							<Select
+								labelId="terminal"
+								id="terminal"
+								name="terminal"
+								value={selectedTerminal}
+								label="Terminale"
+								onChange={onChangeSelect}
+								error={terminalError}
+							>
+								<MenuItem disabled value={'-'}>
+									Scegli un terminale
+								</MenuItem>
+								{terminals.subscribers.map((term, index: number) => {
+									return (
+										<MenuItem value={term.terminalId} key={index}>
+											{term.label}
+										</MenuItem>
+									);
+								})}
+							</Select>
+							<FormHelperText error>{terminalErrorHelper}</FormHelperText>
+						</FormControl>
+						{selectedTerminal !== '-' && terminalHistory?.presets ? (
+							<DataGrid
+								rows={rows}
+								columns={columns}
+								initialState={{
+									pagination: {
+										paginationModel: { page: 0, pageSize: 5 },
+									},
+								}}
+								sx={{
+									borderColor: 'divider',
+									'& .MuiDataGrid-cell:hover': {
+										color: 'primary.main',
+									},
+									marginLeft: '-8.75vw !important',
+									width: '60vw',
+								}}
+								pageSizeOptions={[5, 10]}
+							/>
+						) : (
+							''
+						)}
+						{selectedTerminal !== '-' &&
+						!terminalHistory?.presets &&
+						!isFetching ? (
+							<div style={{ marginTop: '4vh' }}>
+								<Typography variant="subtitle1">
+									Non risultano ancora operazioni per il terminale selezionato
+								</Typography>
+							</div>
+						) : (
+							''
+						)}
+					</Stack>
+				</Box>
+			</Container>
+		</>
 	);
 };
 
