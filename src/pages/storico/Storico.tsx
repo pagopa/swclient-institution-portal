@@ -27,6 +27,7 @@ import Modal from '@mui/material/Modal';
 import Chip from '@mui/material/Chip';
 import axios from 'axios';
 import LoadingSpinner from '../../components/LoadingSpinner';
+import { parse } from 'path';
 
 export interface Terminals {
 	subscribers: [Terminal];
@@ -45,18 +46,18 @@ export interface Terminal {
 }
 
 export interface Row {
-	id: string | number;
+	id: number;
 	transactionId: string;
 	noticeNumber: string;
 	statusTimestamp: Date;
-	amount: string | number;
+	amount: string;
 	status: string;
 	paTaxCode: string;
 	description: string;
 	company: string;
 	office: string;
-	fee: number;
-	totalAmount: number;
+	fee: string;
+	totalAmount: string;
 }
 
 export interface Operation {
@@ -81,14 +82,14 @@ export interface Operation {
 				paymentToken: string;
 				paTaxCode: string;
 				noticeNumber: string;
-				amount: number;
+				amount: string;
 				description: string;
 				company: string;
 				office: string;
 			}
 		];
-		totalAmount: number;
-		fee: number;
+		totalAmount: string;
+		fee: string;
 		status: string;
 	};
 }
@@ -125,7 +126,7 @@ export const StatusChip = ({ status }: { status: string | undefined }) => {
 
 			break;
 		default:
-			return <></>;
+			return <>-</>;
 			break;
 	}
 };
@@ -146,6 +147,12 @@ export const Storico = () => {
 
 	const openModal = (row: Row) => {
 		setModalOpen(true);
+		if (typeof row.fee === 'number') {
+			row.fee = parseFloat(row.fee).toFixed(2);
+		}
+		if (typeof row.totalAmount === 'number') {
+			row.fee = parseFloat(row.totalAmount).toFixed(2);
+		}
 		setSelectedTransaction(row);
 	};
 
@@ -182,7 +189,7 @@ export const Storico = () => {
 			setIsFetching(true);
 			const data: any = await axios.get(
 				process.env.REACT_APP_API_ADDRESS +
-					'/terminals/' +
+					'/presets/' +
 					paTaxCode +
 					'/' +
 					selectedTerminalObject[0]?.subscriberId,
@@ -203,20 +210,21 @@ export const Storico = () => {
 
 	useEffect(() => {
 		let row: Row[] = [];
+		console.log(terminalHistory);
 		terminalHistory?.presets?.map((element, index) => {
 			row.push({
 				id: index,
-				transactionId: element.statusDetails.transactionId,
-				noticeNumber: element.noticeNumber,
-				statusTimestamp: new Date(element.statusTimestamp),
-				amount: element.statusDetails.notices[0].amount,
-				status: element.statusDetails.status,
-				paTaxCode: element.paTaxCode,
-				description: element.statusDetails.notices[0].description,
-				company: element.statusDetails.notices[0].company,
-				office: element.statusDetails.notices[0].office,
-				fee: element.statusDetails.fee,
-				totalAmount: element.statusDetails.totalAmount,
+				transactionId: element?.statusDetails?.transactionId || '-',
+				noticeNumber: element?.noticeNumber || '-',
+				statusTimestamp: new Date(element?.statusTimestamp) || '-',
+				amount: element?.statusDetails?.notices[0].amount || '-',
+				status: element?.statusDetails?.status || '-',
+				paTaxCode: element?.paTaxCode || '-',
+				description: element?.statusDetails?.notices[0].description || '-',
+				company: element?.statusDetails?.notices[0].company || '-',
+				office: element?.statusDetails?.notices[0].office || '-',
+				fee: element?.statusDetails?.fee || '-',
+				totalAmount: element?.statusDetails?.totalAmount || '-',
 			});
 		});
 
@@ -323,7 +331,7 @@ export const Storico = () => {
 			{isFetching ? <LoadingSpinner /> : ''}
 			<Container>
 				<Box sx={{ width: '100%', maxWidth: 1000 }}>
-					{modalOpen ? (
+					{modalOpen && selectedTransaction ? (
 						<Modal
 							open={modalOpen}
 							onClose={() => {
@@ -350,7 +358,7 @@ export const Storico = () => {
 								</Typography>
 								<Stack>
 									<Typography id="modal-modal-description" sx={{ mt: 2 }}>
-										<b>Data: </b>{' '}
+										<b>Data: </b>
 										{selectedTransaction?.statusTimestamp?.getDay() +
 											' ' +
 											selectedTransaction?.statusTimestamp?.toLocaleString(
@@ -389,14 +397,15 @@ export const Storico = () => {
 										<b>Ufficio: </b> {selectedTransaction?.office}
 									</Typography>
 									<Typography id="modal-modal-description" sx={{ mt: 2 }}>
-										<b>Commissione: </b> {selectedTransaction?.fee.toFixed(2)} €
+										<b>Commissione: </b>
+										{selectedTransaction.fee} €
 									</Typography>
 									<Typography id="modal-modal-description" sx={{ mt: 2 }}>
-										<b>Ammontare totale: </b>{' '}
-										{selectedTransaction?.totalAmount.toFixed(2)} €
+										<b>Ammontare totale: </b>
+										{selectedTransaction.totalAmount} €
 									</Typography>
 									<Typography id="modal-modal-description" sx={{ mt: 2 }}>
-										<b>Stato: </b>{' '}
+										<b>Stato: </b>
 										{<StatusChip status={selectedTransaction?.status} />}
 									</Typography>
 								</Stack>
@@ -437,7 +446,9 @@ export const Storico = () => {
 							</Select>
 							<FormHelperText error>{terminalErrorHelper}</FormHelperText>
 						</FormControl>
-						{selectedTerminal !== '-' && terminalHistory?.presets ? (
+						{selectedTerminal !== '-' &&
+						terminalHistory?.presets &&
+						terminalHistory?.presets?.length > 0 ? (
 							<DataGrid
 								rows={rows}
 								columns={columns}
@@ -459,8 +470,10 @@ export const Storico = () => {
 						) : (
 							''
 						)}
-						{selectedTerminal !== '-' &&
-						!terminalHistory?.presets &&
+						{(!terminalHistory?.presets ||
+							(terminalHistory?.presets &&
+								!(terminalHistory?.presets?.length > 0))) &&
+						selectedTerminal !== '-' &&
 						!isFetching ? (
 							<div style={{ marginTop: '4vh' }}>
 								<Typography variant="subtitle1">
