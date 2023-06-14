@@ -257,8 +257,12 @@ export const Dispositivi = () => {
 								}}
 							/>
 						) : (
-							''
-						)}{' '}
+							<div style={{ marginTop: '4vh', marginLeft: '-17.5vw' }}>
+								<Typography variant="subtitle1">
+									Non risulta alcun dispositivo attivo
+								</Typography>
+							</div>
+						)}
 					</Stack>
 				</Box>
 			</Container>

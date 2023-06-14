@@ -448,9 +448,7 @@ export const Storico = () => {
 					)}
 					{selectedTerminal !== '-' && !terminalHistory?.presets ? (
 						<div style={{ marginTop: '4vh' }}>
-							{' '}
 							<Typography variant="subtitle1">
-								{' '}
 								Non risultano ancora operazioni per il terminale selezionato
 							</Typography>
 						</div>

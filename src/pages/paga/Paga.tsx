@@ -1,5 +1,5 @@
 import React, { ChangeEventHandler, useEffect, useState } from 'react';
-
+import Snackbar from '../../components/Snackbar';
 import {
 	Typography,
 	FormHelperText,
@@ -51,7 +51,9 @@ export const Paga = () => {
 	const [taxCodeHelper, setTaxCodeErrorHelper] = useState('');
 	const [terminalError, setTerminalError] = useState(false);
 	const [terminalErrorHelper, setTerminalErrorHelper] = useState('');
-
+	const [toastActive, setToastActive] = useState(false);
+	const [toastStatus, setToastStatus] = useState('');
+	const [toastMessage, setToastMessage] = useState('');
 	const validateTaxCode = new RegExp('[0-9]{11}');
 
 	useEffect(() => {
@@ -158,7 +160,7 @@ export const Paga = () => {
 			setTerminalErrorHelper('');
 		}
 	};
-	const activatePayment = () => {
+	const activatePayment = async () => {
 		if (paymentNoticeNumber === '') {
 			setPaymentNoticeNumberError(true);
 			setPaymentNoticeNumberHelper('Campo obbligatorio');
@@ -188,22 +190,60 @@ export const Paga = () => {
 				(term) => term.terminalId === selectedTerminal
 			);
 
-			axios.post(
-				process.env.REACT_APP_API_ADDRESS + '/presets',
-				{
-					operationType: 'PAYMENT_NOTICE',
-					paTaxCode: paTaxCode,
-					subscriberId: selectedTerminalObject[0]?.subscriberId,
-					noticeTaxCode: noticeTaxCode,
-					noticeNumber: paymentNoticeNumber,
-				},
-				{ headers: { RequestId: process.env.REACT_APP_REQUEST_ID } }
-			);
+			try {
+				const res = await axios.post(
+					process.env.REACT_APP_API_ADDRESS + '/presets',
+					{
+						operationType: 'PAYMENT_NOTICE',
+						paTaxCode: paTaxCode,
+						subscriberId: selectedTerminalObject[0]?.subscriberId,
+						noticeTaxCode: noticeTaxCode,
+						noticeNumber: paymentNoticeNumber,
+					},
+					{ headers: { RequestId: process.env.REACT_APP_REQUEST_ID } }
+				);
+				if (res.status === 200 || res.status === 201) {
+					setSelectedTerminal('-');
+					setNoticeTaxCode('');
+					setPaymentNoticeNumber('');
+					setToastActive(true);
+					setToastStatus('success');
+					setToastMessage('Pagamento attivato!');
+				} else {
+					setToastActive(true);
+					setToastStatus('error');
+					setToastMessage('Pagamento non riuscito!');
+				}
+			} catch (e) {
+				setToastActive(true);
+				setToastStatus('error');
+				setToastMessage('Pagamento non riuscito!');
+			}
 		}
 	};
 
 	return (
 		<Container>
+			{toastStatus === 'success' ? (
+				<Snackbar
+					status={'success'}
+					message={toastMessage}
+					open={toastActive}
+					setOpen={setToastActive}
+				/>
+			) : (
+				''
+			)}
+			{toastStatus === 'error' ? (
+				<Snackbar
+					status={'error'}
+					message={toastMessage}
+					open={toastActive}
+					setOpen={setToastActive}
+				/>
+			) : (
+				''
+			)}
 			<Box sx={{ width: '100%', maxWidth: 1000 }}>
 				<Grid>
 					<Item sx={{ textAlign: 'left' }}>
