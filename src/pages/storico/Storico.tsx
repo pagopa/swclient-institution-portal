@@ -472,7 +472,7 @@ export const Storico = () => {
 						)}
 						{(!terminalHistory?.presets ||
 							(terminalHistory?.presets &&
-								!(terminalHistory?.presets?.length > 0))) &&
+								terminalHistory?.presets?.length < 1)) &&
 						selectedTerminal !== '-' &&
 						!isFetching ? (
 							<div style={{ marginTop: '4vh' }}>
