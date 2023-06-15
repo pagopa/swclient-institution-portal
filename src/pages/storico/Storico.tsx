@@ -195,10 +195,10 @@ export const Storico = () => {
 			setIsFetching(true);
 			const data: any = await axios.get(
 				process.env.REACT_APP_API_ADDRESS +
-					'/presets/' +
-					paTaxCode +
-					'/' +
-					selectedTerminalObject[0]?.subscriberId,
+				'/presets/' +
+				paTaxCode +
+				'/' +
+				selectedTerminalObject[0]?.subscriberId,
 				{
 					headers: {
 						RequestId: process.env.REACT_APP_REQUEST_ID,
@@ -437,7 +437,7 @@ export const Storico = () => {
 						</Item>
 					</Grid>
 					<Stack spacing={6} style={{ marginTop: '2vh' }}>
-						<FormControl sx={{ width: '30vw', marginBottom: '2.5vh' }}>
+						<FormControl sx={{ width: '40vw', marginBottom: '2.5vh' }}>
 							<InputLabel id="terminal" error={terminalError}>
 								Terminale
 							</InputLabel>
@@ -464,8 +464,8 @@ export const Storico = () => {
 							<FormHelperText error>{terminalErrorHelper}</FormHelperText>
 						</FormControl>
 						{selectedTerminal !== '-' &&
-						terminalHistory?.presets &&
-						terminalHistory?.presets?.length > 0 ? (
+							terminalHistory?.presets &&
+							terminalHistory?.presets?.length > 0 ? (
 							<DataGrid
 								rows={rows}
 								columns={columns}
@@ -486,7 +486,6 @@ export const Storico = () => {
 									'& .MuiDataGrid-cell:hover': {
 										color: 'primary.main',
 									},
-									marginLeft: '-8.75vw !important',
 									width: '60vw',
 								}}
 								pageSizeOptions={[5, 10]}
@@ -497,8 +496,8 @@ export const Storico = () => {
 						{(!terminalHistory?.presets ||
 							(terminalHistory?.presets &&
 								terminalHistory?.presets?.length < 1)) &&
-						selectedTerminal !== '-' &&
-						!isFetching ? (
+							selectedTerminal !== '-' &&
+							!isFetching ? (
 							<div style={{ marginTop: '4vh' }}>
 								<Typography variant="subtitle1">
 									Non risultano ancora operazioni per il terminale selezionato

@@ -48,7 +48,7 @@ export const VerticalNav = ({
 				width: '100%',
 				maxWidth: 360,
 				float: 'left',
-				marginRight: '25.25vw',
+				marginRight: '10vw',
 				backgroundColor: 'background.default',
 				height: '100vh',
 			}}

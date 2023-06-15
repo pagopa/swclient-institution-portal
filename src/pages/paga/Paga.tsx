@@ -272,7 +272,7 @@ export const Paga = () => {
 					<Stack spacing={6}>
 						<TextField
 							type="text"
-							sx={{ width: '30vw' }}
+							sx={{ width: '40vw' }}
 							id="noticeNumber"
 							name="noticeNumber"
 							label="Numero avviso"
@@ -285,7 +285,7 @@ export const Paga = () => {
 						/>
 						<TextField
 							type="text"
-							sx={{ width: '30vw' }}
+							sx={{ width: '40vw' }}
 							id="taxCode"
 							name="taxCode"
 							label="Codice ente"
@@ -296,7 +296,7 @@ export const Paga = () => {
 							helperText={taxCodeHelper}
 							required
 						/>
-						<FormControl sx={{ width: '30vw' }}>
+						<FormControl sx={{ width: '40vw' }}>
 							<InputLabel id="terminal" error={terminalError}>
 								Terminale
 							</InputLabel>
@@ -323,7 +323,7 @@ export const Paga = () => {
 						<Button
 							variant="contained"
 							onClick={activatePayment}
-							sx={{ width: '30vw' }}
+							sx={{ width: '40vw' }}
 						>
 							Attiva pagamento{' '}
 						</Button>
