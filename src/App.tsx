@@ -13,7 +13,7 @@ import {
 /* MUI Core Components */
 import { VerticalNav } from './components/VerticalNav';
 import { ThemeProvider } from '@mui/material';
-import { HeaderAccount, Footer } from '@pagopa/mui-italia';
+import { HeaderAccount, Footer, HeaderProduct } from '@pagopa/mui-italia';
 /* MUI Italia theme */
 import { theme } from '@pagopa/mui-italia';
 import { Paga } from './pages/paga';
@@ -22,6 +22,7 @@ import { Storico } from './pages/storico';
 import PaymentsIcon from '@mui/icons-material/Payments';
 import TabletAndroidIcon from '@mui/icons-material/TabletAndroid';
 import HistoryIcon from '@mui/icons-material/History';
+import { PartySwitchItem } from '@pagopa/mui-italia/dist/components/PartySwitch';
 
 
 function App() {
@@ -74,10 +75,23 @@ function App() {
 		},
 	]);
 
+
+
 	return (
 		<ThemeProvider theme={theme}>
 			<div className="App">
-				<HeaderAccount
+				<HeaderProduct productsList={[{
+					id: "string",
+					title: "PagoPA S.p.A",
+					productUrl: "AAA",
+					linkType: "internal"
+				}]} partyList={[{
+					id: "string",
+					name: "ASL Roma 2",
+					logoUrl: 'https://i2.wp.com/tiburno.tv/wp-content/uploads/2019/12/asl-roma-5-1-e1611159976843.jpg?fit=659%2C322&ssl=1'
+				}]} />
+
+				{/* <HeaderAccount
 					rootLink={{
 						label: 'ASL Roma 2',
 						href: '',
@@ -100,7 +114,7 @@ function App() {
 							onClick: () => { },
 						},
 					]}
-				/>
+				/>*/}
 				<VerticalNav
 					sections={sections}
 					setSections={setSections}
