@@ -16,6 +16,7 @@ import DeleteIcon from '@mui/icons-material/DeleteForever';
 import axios from 'axios';
 import { StatusChip } from '../storico';
 import LoadingSpinner from '../../components/LoadingSpinner';
+import Snackbar from '../../components/Snackbar';
 
 export interface Terminals {
 	subscribers: [Terminal];
@@ -42,6 +43,10 @@ export const Dispositivi = () => {
 	});
 	const [modalOpen, setModalOpen] = useState(false);
 	const [isFetching, setIsFetching] = useState(false);
+	const [toastActive, setToastActive] = useState(false);
+	const [toastStatus, setToastStatus] = useState('');
+	const [toastMessage, setToastMessage] = useState('');
+
 	const columns: GridColDef[] = [
 		{
 			field: 'terminalId',
@@ -101,7 +106,9 @@ export const Dispositivi = () => {
 			);
 			setTerminals(data.data);
 		} catch (e) {
-			console.log(e);
+			setToastActive(true);
+			setToastStatus('error');
+			setToastMessage('Errore! ' + e);
 		}
 		setTimeout(() => {
 			setIsFetching(false);
@@ -126,7 +133,10 @@ export const Dispositivi = () => {
 			setModalOpen(false);
 			getTerminals();
 		} catch (e) {
-			console.log(e);
+			setToastActive(true);
+			setToastStatus('error');
+			setToastMessage('Errore! ' + e);
+			setModalOpen(false);
 		}
 		setTimeout(() => {
 			setIsFetching(false);
@@ -185,6 +195,16 @@ export const Dispositivi = () => {
 		<>
 			{isFetching ? <LoadingSpinner /> : ''}
 			<Container>
+				{toastStatus === 'error' ? (
+					<Snackbar
+						status={'error'}
+						message={toastMessage}
+						open={toastActive}
+						setOpen={setToastActive}
+					/>
+				) : (
+					''
+				)}
 				<Box sx={{ width: '100%', maxWidth: 1000 }}>
 					{modalOpen ? (
 						<Modal
@@ -241,6 +261,13 @@ export const Dispositivi = () => {
 						{rows.length > 0 ? (
 							<DataGrid
 								rows={rows}
+								localeText={{
+									MuiTablePagination: {
+										labelDisplayedRows: ({ from, to, count }) =>
+											`${from} - ${to} di ${count}`,
+										labelRowsPerPage: <>Righe per pagina</>,
+									},
+								}}
 								columns={columns}
 								initialState={{
 									pagination: {

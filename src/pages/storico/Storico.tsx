@@ -28,6 +28,7 @@ import Chip from '@mui/material/Chip';
 import axios from 'axios';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import { parse } from 'path';
+import Snackbar from '../../components/Snackbar';
 
 export interface Terminals {
 	subscribers: [Terminal];
@@ -142,6 +143,9 @@ export const Storico = () => {
 	const [modalOpen, setModalOpen] = useState(false);
 	const [paTaxCode, setPaTaxCode] = useState('15376371009');
 	const [isFetching, setIsFetching] = useState(true);
+	const [toastMessage, setToastMessage] = useState('');
+	const [toastStatus, setToastStatus] = useState('');
+	const [toastActive, setToastActive] = useState(false);
 	const [terminalHistory, setTerminalHistory] =
 		useState<TerminalHistory | null>(null);
 
@@ -171,7 +175,9 @@ export const Storico = () => {
 			);
 			setTerminals(data.data);
 		} catch (e) {
-			console.log(e);
+			setToastActive(true);
+			setToastStatus('error');
+			setToastMessage('Errore! ' + e);
 		}
 		setTimeout(() => {
 			setIsFetching(false);
@@ -201,7 +207,9 @@ export const Storico = () => {
 			);
 			setTerminalHistory(data.data);
 		} catch (e) {
-			console.log(e);
+			setToastActive(true);
+			setToastStatus('error');
+			setToastMessage('Errore! ' + e);
 		}
 		setTimeout(() => {
 			setIsFetching(false);
@@ -329,6 +337,16 @@ export const Storico = () => {
 		<>
 			{isFetching ? <LoadingSpinner /> : ''}
 			<Container>
+				{toastStatus === 'error' ? (
+					<Snackbar
+						status={'error'}
+						message={toastMessage}
+						open={toastActive}
+						setOpen={setToastActive}
+					/>
+				) : (
+					''
+				)}
 				<Box sx={{ width: '100%', maxWidth: 1000 }}>
 					{modalOpen && selectedTransaction ? (
 						<Modal
@@ -454,6 +472,13 @@ export const Storico = () => {
 								initialState={{
 									pagination: {
 										paginationModel: { page: 0, pageSize: 5 },
+									},
+								}}
+								localeText={{
+									MuiTablePagination: {
+										labelDisplayedRows: ({ from, to, count }) =>
+											`${from} - ${to} di ${count}`,
+										labelRowsPerPage: <>Righe per pagina</>,
 									},
 								}}
 								sx={{

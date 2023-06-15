@@ -92,7 +92,9 @@ export const Paga = () => {
 			);
 			setTerminals(data.data);
 		} catch (e) {
-			console.log(e);
+			setToastActive(true);
+			setToastStatus('error');
+			setToastMessage('Errore!  ' + e);
 		}
 		setTimeout(() => {
 			setIsFetching(false);
