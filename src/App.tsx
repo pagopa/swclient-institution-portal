@@ -80,7 +80,7 @@ function App() {
 				<HeaderAccount
 					rootLink={{
 						label: 'ASL Roma 2',
-						href: 'home',
+						href: '',
 						ariaLabel: 'home',
 						title: 'ASL Roma 2',
 					}}
