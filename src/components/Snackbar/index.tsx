@@ -43,10 +43,14 @@ export default function SimpleSnackbar({
 	return (
 		<div>
 			<Snackbar
+				sx={{
+					bottom: '40vh !important',
+					left: '42.5vw !important',
+				}}
 				open={open}
-				autoHideDuration={6000}
 				onClose={handleClose}
 				action={action}
+				autoHideDuration={6000}
 			>
 				<Alert
 					sx={{
