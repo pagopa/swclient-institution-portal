@@ -36,7 +36,7 @@ export interface Terminal {
 
 export const Dispositivi = () => {
 	const [rows, setRows] = useState([]);
-	const [paTaxCode, setPaTaxCode] = useState('15376371009');
+	const [paTaxCode, setPaTaxCode] = useState('00139860050');
 	const [selectedTerminal, setSelectedTerminal] = useState<any>(null);
 	const [terminals, setTerminals] = useState<Terminals | { subscribers: [] }>({
 		subscribers: [],
@@ -194,7 +194,7 @@ export const Dispositivi = () => {
 						channel: 'POS',
 						merchantId: '28405fHfk73x88D',
 						terminalId: '0aB9wXyZ',
-						paTaxCode: '15376371009',
+						paTaxCode: '00139860050',
 						subscriberId: 'x46tr3',
 						label: 'Reception POS',
 						subscriptionTimestamp: '2023-05-05T09:31:33',
