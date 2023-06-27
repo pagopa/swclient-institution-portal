@@ -169,6 +169,8 @@ export const Storico = () => {
 				process.env.REACT_APP_API_ADDRESS + '/terminals/' + paTaxCode,
 				{
 					headers: {
+						Authorization: 'Bearer ' + sessionStorage.getItem('access_token'),
+
 						RequestId: process.env.REACT_APP_REQUEST_ID,
 					},
 				}
@@ -201,6 +203,8 @@ export const Storico = () => {
 					selectedTerminalObject[0]?.subscriberId,
 				{
 					headers: {
+						Authorization: 'Bearer ' + sessionStorage.getItem('access_token'),
+
 						RequestId: process.env.REACT_APP_REQUEST_ID,
 					},
 				}

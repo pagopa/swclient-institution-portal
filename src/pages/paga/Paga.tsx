@@ -86,6 +86,7 @@ export const Paga = () => {
 				process.env.REACT_APP_API_ADDRESS + '/terminals/' + paTaxCode,
 				{
 					headers: {
+						Authorization: 'Bearer ' + sessionStorage.getItem('access_token'),
 						RequestId: process.env.REACT_APP_REQUEST_ID,
 					},
 				}
@@ -209,7 +210,12 @@ export const Paga = () => {
 						noticeTaxCode: noticeTaxCode,
 						noticeNumber: paymentNoticeNumber,
 					},
-					{ headers: { RequestId: process.env.REACT_APP_REQUEST_ID } }
+					{
+						headers: {
+							Authorization: 'Bearer ' + sessionStorage.getItem('access_token'),
+							RequestId: process.env.REACT_APP_REQUEST_ID,
+						},
+					}
 				);
 				if (res.status === 200 || res.status === 201) {
 					setSelectedTerminal('-');

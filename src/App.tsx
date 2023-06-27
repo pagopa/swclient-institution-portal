@@ -23,6 +23,7 @@ import PaymentsIcon from '@mui/icons-material/Payments';
 import TabletAndroidIcon from '@mui/icons-material/TabletAndroid';
 import HistoryIcon from '@mui/icons-material/History';
 import { PartySwitchItem } from '@pagopa/mui-italia/dist/components/PartySwitch';
+import axios from 'axios';
 
 function App() {
 	const getRoutePath = (location: any, params: Params): string => {
@@ -74,6 +75,22 @@ function App() {
 		},
 	]);
 
+	useEffect(() => {
+		axios
+			.post('https://mil-d-apim.azure-api.net/mil-auth/token', {
+				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+				grant_type: 'client_credentials',
+				client_id: 'b9d189ec-fc47-4792-8018-db914057d964',
+				client_secret: '3674f0e7-d717-44cc-a3bc-5f8f41771fea',
+			})
+			.then((res) => {
+				console.log(res);
+				sessionStorage.setItem('access_token', res.data.access_token);
+			})
+			.catch((e) => {
+				console.log(e);
+			});
+	}, []);
 	return (
 		<ThemeProvider theme={theme}>
 			<div className="App">
