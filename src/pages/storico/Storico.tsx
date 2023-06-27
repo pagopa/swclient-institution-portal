@@ -163,6 +163,28 @@ export const Storico = () => {
 	const [rows, setRows] = useState([{}]);
 
 	const getTerminals = async () => {
+		if (sessionStorage.getItem('access_token') === null) {
+			setIsFetching(true);
+			await axios
+				.post(
+					'https://mil-d-apim.azure-api.net/mil-auth/token',
+					{
+						grant_type: 'client_credentials',
+						client_id: 'b9d189ec-fc47-4792-8018-db914057d964',
+						client_secret: '3674f0e7-d717-44cc-a3bc-5f8f41771fea',
+					},
+					{ headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
+				)
+				.then((res) => {
+					sessionStorage.setItem('access_token', res.data.access_token);
+				})
+				.catch((e) => {
+					console.log(e);
+				});
+			setIsFetching(false);
+		} else {
+			setIsFetching(false);
+		}
 		try {
 			setIsFetching(true);
 			const data: any = await axios.get(
@@ -315,7 +337,7 @@ export const Storico = () => {
 		} else {
 			getTerminals();
 		}
-	}, []);
+	}, [sessionStorage.getItem('access_token')]);
 
 	const Item = styled(Paper)(({ theme }) => ({
 		backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',

@@ -77,14 +77,16 @@ function App() {
 
 	useEffect(() => {
 		axios
-			.post('https://mil-d-apim.azure-api.net/mil-auth/token', {
-				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-				grant_type: 'client_credentials',
-				client_id: 'b9d189ec-fc47-4792-8018-db914057d964',
-				client_secret: '3674f0e7-d717-44cc-a3bc-5f8f41771fea',
-			})
+			.post(
+				'https://mil-d-apim.azure-api.net/mil-auth/token',
+				{
+					grant_type: 'client_credentials',
+					client_id: 'b9d189ec-fc47-4792-8018-db914057d964',
+					client_secret: '3674f0e7-d717-44cc-a3bc-5f8f41771fea',
+				},
+				{ headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
+			)
 			.then((res) => {
-				console.log(res);
 				sessionStorage.setItem('access_token', res.data.access_token);
 			})
 			.catch((e) => {
@@ -112,31 +114,6 @@ function App() {
 						},
 					]}
 				/>
-
-				{/* <HeaderAccount
-					rootLink={{
-						label: 'ASL Roma 2',
-						href: '',
-						ariaLabel: 'home',
-						title: 'ASL Roma 2',
-					}}
-					onAssistanceClick={() => { }}
-					loggedUser={{
-						id: 'string',
-						name: 'Mario',
-						surname: 'Rossi',
-						email: 'string',
-					}}
-					enableDropdown={true}
-					userActions={[
-						{
-							id: 'string',
-							icon: null,
-							label: 'Configurazione',
-							onClick: () => { },
-						},
-					]}
-				/>*/}
 				<VerticalNav
 					sections={sections}
 					setSections={setSections}
