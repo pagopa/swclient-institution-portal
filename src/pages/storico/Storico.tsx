@@ -219,10 +219,10 @@ export const Storico = () => {
 			setIsFetching(true);
 			const data: any = await axios.get(
 				process.env.REACT_APP_API_ADDRESS +
-					'/presets/' +
-					paTaxCode +
-					'/' +
-					selectedTerminalObject[0]?.subscriberId,
+				'/presets/' +
+				paTaxCode +
+				'/' +
+				selectedTerminalObject[0]?.subscriberId,
 				{
 					headers: {
 						Authorization: 'Bearer ' + sessionStorage.getItem('access_token'),
@@ -402,7 +402,7 @@ export const Storico = () => {
 								<Stack>
 									<Typography id="modal-modal-description" sx={{ mt: 2 }}>
 										<b>Data: </b>
-										{selectedTransaction?.statusTimestamp?.getDay() +
+										{selectedTransaction?.statusTimestamp?.getDate() +
 											' ' +
 											selectedTransaction?.statusTimestamp?.toLocaleString(
 												'default',
@@ -414,12 +414,12 @@ export const Storico = () => {
 											(selectedTransaction?.statusTimestamp?.getHours() > 9
 												? selectedTransaction?.statusTimestamp?.getHours()
 												: '0' +
-												  selectedTransaction?.statusTimestamp?.getHours()) +
+												selectedTransaction?.statusTimestamp?.getHours()) +
 											':' +
 											(selectedTransaction?.statusTimestamp?.getMinutes() > 9
 												? selectedTransaction?.statusTimestamp?.getMinutes()
 												: '0' +
-												  selectedTransaction?.statusTimestamp?.getMinutes())}
+												selectedTransaction?.statusTimestamp?.getMinutes())}
 									</Typography>
 									<Typography id="modal-modal-description" sx={{ mt: 2 }}>
 										<b>Id transazione: </b> {selectedTransaction?.transactionId}
@@ -496,8 +496,8 @@ export const Storico = () => {
 							<FormHelperText error>{terminalErrorHelper}</FormHelperText>
 						</FormControl>
 						{selectedTerminal !== '-' &&
-						terminalHistory?.presets &&
-						terminalHistory?.presets?.length > 0 ? (
+							terminalHistory?.presets &&
+							terminalHistory?.presets?.length > 0 ? (
 							<DataGrid
 								rows={rows}
 								columns={columns}
@@ -528,8 +528,8 @@ export const Storico = () => {
 						{(!terminalHistory?.presets ||
 							(terminalHistory?.presets &&
 								terminalHistory?.presets?.length < 1)) &&
-						selectedTerminal !== '-' &&
-						!isFetching ? (
+							selectedTerminal !== '-' &&
+							!isFetching ? (
 							<div style={{ marginTop: '4vh' }}>
 								<Typography variant="subtitle1">
 									Non risultano ancora operazioni per il terminale selezionato
