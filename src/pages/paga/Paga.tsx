@@ -19,6 +19,7 @@ import {
 } from '@mui/material';
 import axios from 'axios';
 import LoadingSpinner from '../../components/LoadingSpinner';
+import utils from '../../utils';
 export interface Terminals {
 	subscribers: [Terminal];
 }
@@ -80,6 +81,8 @@ export const Paga = () => {
 	}, []);
 
 	const getTerminals = async () => {
+		await utils.checkTokenValidity();
+
 		if (sessionStorage.getItem('access_token') === null) {
 			setIsFetching(true);
 			await axios
@@ -192,6 +195,7 @@ export const Paga = () => {
 		}
 	};
 	const activatePayment = async () => {
+
 		if (paymentNoticeNumber === '') {
 			setPaymentNoticeNumberError(true);
 			setPaymentNoticeNumberHelper('Campo obbligatorio');
@@ -222,6 +226,7 @@ export const Paga = () => {
 			);
 
 			try {
+				await utils.checkTokenValidity();
 				setIsFetching(true);
 				const res = await axios.post(
 					process.env.REACT_APP_API_ADDRESS + '/presets',

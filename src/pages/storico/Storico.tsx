@@ -29,6 +29,7 @@ import axios from 'axios';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import { parse } from 'path';
 import Snackbar from '../../components/Snackbar';
+import utils from '../../utils';
 
 export interface Terminals {
 	subscribers: [Terminal];
@@ -186,7 +187,10 @@ export const Storico = () => {
 			setIsFetching(false);
 		}
 		try {
+			await utils.checkTokenValidity();
+
 			setIsFetching(true);
+
 			const data: any = await axios.get(
 				process.env.REACT_APP_API_ADDRESS + '/terminals/' + paTaxCode,
 				{
@@ -216,6 +220,8 @@ export const Storico = () => {
 			const selectedTerminalObject: Terminal[] = terminals.subscribers.filter(
 				(term) => term.terminalId === selectedTerminal
 			);
+			await utils.checkTokenValidity();
+
 			setIsFetching(true);
 			const data: any = await axios.get(
 				process.env.REACT_APP_API_ADDRESS +

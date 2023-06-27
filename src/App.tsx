@@ -10,6 +10,7 @@ import {
 	useParams,
 	Params,
 } from 'react-router-dom';
+import utils from './utils';
 /* MUI Core Components */
 import { VerticalNav } from './components/VerticalNav';
 import { ThemeProvider } from '@mui/material';
@@ -75,16 +76,6 @@ function App() {
 		},
 	]);
 
-	const parseJwt = (token: string | null) => {
-		if (typeof token == "string") {
-			try {
-				return JSON.parse(atob(token.split(".")[1]));
-			} catch (e) {
-				return null;
-			}
-		}
-	};
-
 
 
 	useEffect(() => {
@@ -114,29 +105,7 @@ function App() {
 				});
 		}
 		else {
-			const decodedJwt = parseJwt(sessionStorage.getItem('access_token'));
-			console.log(decodedJwt.exp * 1000);
-			if (decodedJwt.exp * 1000 < Date.now()) {
-				console.log("Refreshing token... ");
-				axios
-					.post(
-						'https://mil-d-apim.azure-api.net/mil-auth/token',
-						{
-							grant_type: 'client_credentials',
-							client_id: 'b9d189ec-fc47-4792-8018-db914057d964',
-							client_secret: '3674f0e7-d717-44cc-a3bc-5f8f41771fea',
-						},
-						{ headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
-					)
-					.then((res) => {
-						sessionStorage.setItem('access_token', res.data.access_token);
-						sessionStorage.setItem('expires_in', res.data.expires_in);
-
-					})
-					.catch((e) => {
-						console.log(e);
-					});
-			}
+			utils.checkTokenValidity();
 		}
 	}, []);
 	return (
