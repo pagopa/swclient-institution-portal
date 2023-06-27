@@ -117,6 +117,7 @@ function App() {
 			const decodedJwt = parseJwt(sessionStorage.getItem('access_token'));
 			console.log(decodedJwt.exp * 1000);
 			if (decodedJwt.exp * 1000 < Date.now()) {
+				console.log("Refreshing token... ");
 				axios
 					.post(
 						'https://mil-d-apim.azure-api.net/mil-auth/token',
