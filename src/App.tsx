@@ -75,23 +75,68 @@ function App() {
 		},
 	]);
 
+	const parseJwt = (token: string | null) => {
+		if (typeof token == "string") {
+			try {
+				return JSON.parse(atob(token.split(".")[1]));
+			} catch (e) {
+				return null;
+			}
+		}
+	};
+
+
+
 	useEffect(() => {
-		axios
-			.post(
-				'https://mil-d-apim.azure-api.net/mil-auth/token',
-				{
-					grant_type: 'client_credentials',
-					client_id: 'b9d189ec-fc47-4792-8018-db914057d964',
-					client_secret: '3674f0e7-d717-44cc-a3bc-5f8f41771fea',
-				},
-				{ headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
-			)
-			.then((res) => {
-				sessionStorage.setItem('access_token', res.data.access_token);
-			})
-			.catch((e) => {
-				console.log(e);
-			});
+
+
+
+		if (sessionStorage.getItem('access_token') === null) {
+
+
+			axios
+				.post(
+					'https://mil-d-apim.azure-api.net/mil-auth/token',
+					{
+						grant_type: 'client_credentials',
+						client_id: 'b9d189ec-fc47-4792-8018-db914057d964',
+						client_secret: '3674f0e7-d717-44cc-a3bc-5f8f41771fea',
+					},
+					{ headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
+				)
+				.then((res) => {
+					sessionStorage.setItem('access_token', res.data.access_token);
+					sessionStorage.setItem('expires_in', res.data.expires_in);
+
+				})
+				.catch((e) => {
+					console.log(e);
+				});
+		}
+		else {
+			const decodedJwt = parseJwt(sessionStorage.getItem('access_token'));
+			console.log(decodedJwt.exp * 1000);
+			if (decodedJwt.exp * 1000 < Date.now()) {
+				axios
+					.post(
+						'https://mil-d-apim.azure-api.net/mil-auth/token',
+						{
+							grant_type: 'client_credentials',
+							client_id: 'b9d189ec-fc47-4792-8018-db914057d964',
+							client_secret: '3674f0e7-d717-44cc-a3bc-5f8f41771fea',
+						},
+						{ headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
+					)
+					.then((res) => {
+						sessionStorage.setItem('access_token', res.data.access_token);
+						sessionStorage.setItem('expires_in', res.data.expires_in);
+
+					})
+					.catch((e) => {
+						console.log(e);
+					});
+			}
+		}
 	}, []);
 	return (
 		<ThemeProvider theme={theme}>
@@ -137,14 +182,14 @@ function App() {
 						companyLink={{ href: 'test', ariaLabel: 'Company Link' }}
 						currentLangCode={undefined}
 						languages={{ it: { it: 'Italiano' } }}
-						onLanguageChanged={() => {}}
+						onLanguageChanged={() => { }}
 						postLoginLinks={[
 							{
 								label: '',
 								href: 'string',
 								ariaLabel: 'POSTLOG',
 								linkType: 'internal',
-								onClick: () => {},
+								onClick: () => { },
 							},
 						]}
 						preLoginLinks={{
@@ -154,7 +199,7 @@ function App() {
 										label: 'About us',
 										ariaLabel: 'string',
 										linkType: 'internal',
-										onClick: () => {},
+										onClick: () => { },
 									},
 								],
 							},
@@ -165,7 +210,7 @@ function App() {
 										label: 'Resources',
 										ariaLabel: 'string',
 										linkType: 'internal',
-										onClick: () => {},
+										onClick: () => { },
 									},
 								],
 							},
@@ -180,7 +225,7 @@ function App() {
 										title: 'Social',
 										ariaLabel: 'Social',
 										/** if defined it will override the href behavior */
-										onClick: () => {},
+										onClick: () => { },
 									},
 								],
 								links: [
@@ -188,7 +233,7 @@ function App() {
 										label: 'string',
 										ariaLabel: 'string',
 										linkType: 'internal',
-										onClick: () => {},
+										onClick: () => { },
 									},
 								],
 							},
