@@ -28,13 +28,16 @@ import axios from 'axios';
 
 function App() {
 	const getRoutePath = (location: any, params: Params): string => {
-		const { pathname } = location;
+		/* Function to get the current path, and isplay the correct page accordingly*/
+		const { pathname } =
+			location; /* Get the path from the location (useLocation), if there's only one param then return the single path  */
 
 		if (!Object.keys(params).length) {
 			return pathname; // we don't need to replace anything
 		}
 
-		let path = pathname;
+		let path =
+			pathname; /* if there's more than one path loop through the params and return an array with paramName instead of the value */
 		Object.entries(params).forEach(([paramName, paramValue]) => {
 			if (paramValue) {
 				path = path.replace(paramValue, `:${paramName}`);
@@ -44,6 +47,8 @@ function App() {
 	};
 
 	const getCurrentPath = () => {
+		/* Uses the getRoutePath to return the current path without the "/"*/
+
 		// eslint-disable-next-line react-hooks/rules-of-hooks
 		const location = useLocation();
 		// eslint-disable-next-line react-hooks/rules-of-hooks
@@ -76,15 +81,9 @@ function App() {
 		},
 	]);
 
-
-
 	useEffect(() => {
-
-
-
 		if (sessionStorage.getItem('access_token') === null) {
-
-
+			/* If token is null, then get a new token otherwise, use the utils class to check for token validity*/
 			axios
 				.post(
 					'https://mil-d-apim.azure-api.net/mil-auth/token',
@@ -98,13 +97,11 @@ function App() {
 				.then((res) => {
 					sessionStorage.setItem('access_token', res.data.access_token);
 					sessionStorage.setItem('expires_in', res.data.expires_in);
-
 				})
 				.catch((e) => {
 					console.log(e);
 				});
-		}
-		else {
+		} else {
 			utils.checkTokenValidity();
 		}
 	}, []);
@@ -152,14 +149,14 @@ function App() {
 						companyLink={{ href: 'test', ariaLabel: 'Company Link' }}
 						currentLangCode={undefined}
 						languages={{ it: { it: 'Italiano' } }}
-						onLanguageChanged={() => { }}
+						onLanguageChanged={() => {}}
 						postLoginLinks={[
 							{
 								label: '',
 								href: 'string',
 								ariaLabel: 'POSTLOG',
 								linkType: 'internal',
-								onClick: () => { },
+								onClick: () => {},
 							},
 						]}
 						preLoginLinks={{
@@ -169,7 +166,7 @@ function App() {
 										label: 'About us',
 										ariaLabel: 'string',
 										linkType: 'internal',
-										onClick: () => { },
+										onClick: () => {},
 									},
 								],
 							},
@@ -180,7 +177,7 @@ function App() {
 										label: 'Resources',
 										ariaLabel: 'string',
 										linkType: 'internal',
-										onClick: () => { },
+										onClick: () => {},
 									},
 								],
 							},
@@ -195,7 +192,7 @@ function App() {
 										title: 'Social',
 										ariaLabel: 'Social',
 										/** if defined it will override the href behavior */
-										onClick: () => { },
+										onClick: () => {},
 									},
 								],
 								links: [
@@ -203,7 +200,7 @@ function App() {
 										label: 'string',
 										ariaLabel: 'string',
 										linkType: 'internal',
-										onClick: () => { },
+										onClick: () => {},
 									},
 								],
 							},
