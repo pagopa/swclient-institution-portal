@@ -153,10 +153,10 @@ export const Storico = () => {
 	const openModal = (row: Row) => {
 		setModalOpen(true);
 		if (typeof row.fee === 'number') {
-			row.fee = parseFloat(row.fee).toFixed(2);
+			row.fee = ((parseFloat(row.fee)) / 100).toFixed(2);
 		}
 		if (typeof row.totalAmount === 'number') {
-			row.fee = parseFloat(row.totalAmount).toFixed(2);
+			row.totalAmount = parseFloat(row.totalAmount).toFixed(2);
 		}
 		setSelectedTransaction(row);
 	};
