@@ -60,6 +60,7 @@ export const Paga = () => {
 
 	useEffect(() => {
 		if (process.env.REACT_APP_IS_USING_MOCK === 'true') {
+			/* If mocking use this data, otherwise call the API */
 			setTerminals({
 				subscribers: [
 					{
@@ -195,7 +196,6 @@ export const Paga = () => {
 		}
 	};
 	const activatePayment = async () => {
-
 		if (paymentNoticeNumber === '') {
 			setPaymentNoticeNumberError(true);
 			setPaymentNoticeNumberHelper('Campo obbligatorio');

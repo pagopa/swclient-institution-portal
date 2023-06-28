@@ -100,6 +100,8 @@ export interface TerminalHistory {
 }
 
 export const StatusChip = ({ status }: { status: string | undefined }) => {
+	/* StatusChip comoponent, depending on the status, return a different type of Chip, had to 
+use this switch because if I put a variable for the color it would give me an error. */
 	let statusLabel;
 	switch (status) {
 		case 'PRE_CLOSE':
@@ -153,7 +155,7 @@ export const Storico = () => {
 	const openModal = (row: Row) => {
 		setModalOpen(true);
 		if (typeof row.fee === 'number') {
-			row.fee = ((parseFloat(row.fee)) / 100).toFixed(2);
+			row.fee = (parseFloat(row.fee) / 100).toFixed(2);
 		}
 		if (typeof row.totalAmount === 'number') {
 			row.totalAmount = parseFloat(row.totalAmount).toFixed(2);
@@ -225,10 +227,10 @@ export const Storico = () => {
 			setIsFetching(true);
 			const data: any = await axios.get(
 				process.env.REACT_APP_API_ADDRESS +
-				'/presets/' +
-				paTaxCode +
-				'/' +
-				selectedTerminalObject[0]?.subscriberId,
+					'/presets/' +
+					paTaxCode +
+					'/' +
+					selectedTerminalObject[0]?.subscriberId,
 				{
 					headers: {
 						Authorization: 'Bearer ' + sessionStorage.getItem('access_token'),
@@ -420,12 +422,12 @@ export const Storico = () => {
 											(selectedTransaction?.statusTimestamp?.getHours() > 9
 												? selectedTransaction?.statusTimestamp?.getHours()
 												: '0' +
-												selectedTransaction?.statusTimestamp?.getHours()) +
+												  selectedTransaction?.statusTimestamp?.getHours()) +
 											':' +
 											(selectedTransaction?.statusTimestamp?.getMinutes() > 9
 												? selectedTransaction?.statusTimestamp?.getMinutes()
 												: '0' +
-												selectedTransaction?.statusTimestamp?.getMinutes())}
+												  selectedTransaction?.statusTimestamp?.getMinutes())}
 									</Typography>
 									<Typography id="modal-modal-description" sx={{ mt: 2 }}>
 										<b>Id transazione: </b> {selectedTransaction?.transactionId}
@@ -502,8 +504,8 @@ export const Storico = () => {
 							<FormHelperText error>{terminalErrorHelper}</FormHelperText>
 						</FormControl>
 						{selectedTerminal !== '-' &&
-							terminalHistory?.presets &&
-							terminalHistory?.presets?.length > 0 ? (
+						terminalHistory?.presets &&
+						terminalHistory?.presets?.length > 0 ? (
 							<DataGrid
 								rows={rows}
 								columns={columns}
@@ -534,8 +536,8 @@ export const Storico = () => {
 						{(!terminalHistory?.presets ||
 							(terminalHistory?.presets &&
 								terminalHistory?.presets?.length < 1)) &&
-							selectedTerminal !== '-' &&
-							!isFetching ? (
+						selectedTerminal !== '-' &&
+						!isFetching ? (
 							<div style={{ marginTop: '4vh' }}>
 								<Typography variant="subtitle1">
 									Non risultano ancora operazioni per il terminale selezionato
