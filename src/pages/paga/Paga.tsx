@@ -82,10 +82,10 @@ export const Paga = () => {
 	}, []);
 
 	const getTerminals = async () => {
-		await utils.checkTokenValidity();
+		await utils.checkTokenValidity(); //Check if token is valid, if not, or if token is null, get a new token
 
 		if (sessionStorage.getItem('access_token') === null) {
-			setIsFetching(true);
+			setIsFetching(true); //if is fetching then in the JSX the loading spinner will be shown
 			await axios
 				.post(
 					'https://mil-d-apim.azure-api.net/mil-auth/token',
@@ -119,11 +119,14 @@ export const Paga = () => {
 			);
 			setTerminals(data.data);
 		} catch (e) {
-			setToastActive(true);
+			setToastActive(
+				true
+			); /* If an exception is thrown activate the toast, set its status to error and show an error message */
 			setToastStatus('error');
 			setToastMessage('Errore!  ' + e);
 		}
 		setTimeout(() => {
+			/* Show the spinner for 0.5s more than the API call, otherwise it would be seen as a flash most of the time*/
 			setIsFetching(false);
 		}, 500);
 	};
