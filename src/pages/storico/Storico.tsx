@@ -260,7 +260,8 @@ export const Storico = () => {
 				statusTimestamp: new Date(element?.statusTimestamp) || '-',
 				amount:
 					typeof element?.statusDetails?.notices[0].amount === 'number'
-						? element?.statusDetails?.notices[0].amount / 100 + ' €'
+						? (element?.statusDetails?.notices[0].amount / 100).toFixed(2) +
+						  ' €'
 						: '-',
 				status: element?.statusDetails?.status || '-',
 				paTaxCode: element?.paTaxCode || '-',
@@ -466,19 +467,24 @@ export const Storico = () => {
 									</Typography>
 									<Typography id="modal-modal-description" sx={{ mt: 2 }}>
 										<b>Commissione: </b>
-										{selectedTransaction.fee} €
+										{selectedTransaction.fee !== '-'
+											? selectedTransaction.fee + ' €'
+											: ' -'}{' '}
 									</Typography>
 									<Typography id="modal-modal-description" sx={{ mt: 2 }}>
 										<b>Importo avviso: </b>
-										{selectedTransaction.totalAmount} €
+										{selectedTransaction.totalAmount !== '-'
+											? selectedTransaction.totalAmount + ' €'
+											: ' -'}
 									</Typography>
 									<Typography id="modal-modal-description" sx={{ mt: 2 }}>
 										<b>Ammontare totale : </b>
-										{(
-											parseFloat(selectedTransaction.totalAmount) +
-											parseFloat(selectedTransaction.fee)
-										).toFixed(2)}
-										€
+										{selectedTransaction.totalAmount !== '-'
+											? (
+													parseFloat(selectedTransaction.totalAmount) +
+													parseFloat(selectedTransaction.fee)
+											  ).toFixed(2) + ' €'
+											: '-'}
 									</Typography>
 									<Typography id="modal-modal-description" sx={{ mt: 2 }}>
 										<b>Stato: </b>
