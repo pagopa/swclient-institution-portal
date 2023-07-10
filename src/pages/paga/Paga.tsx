@@ -81,6 +81,14 @@ export const Paga = () => {
 		}
 	}, []);
 
+	useEffect(() => {
+		if (terminals.subscribers?.length == 1) {
+			setSelectedTerminal(
+				terminals.subscribers[0].terminalId
+			); /* If only one terminal is present, then set it as the seelcted terminal*/
+		}
+	}, [terminals]);
+
 	const getTerminals = async () => {
 		await utils.checkTokenValidity(); //Check if token is valid, if not, or if token is null, get a new token
 
@@ -248,7 +256,14 @@ export const Paga = () => {
 					}
 				);
 				if (res.status === 200 || res.status === 201) {
-					setSelectedTerminal('-');
+					/* Again, if after the API call, only one terminal is present, set it as the selected one */
+					if (terminals.subscribers?.length > 1) {
+						setSelectedTerminal('-');
+					} else {
+						if (terminals.subscribers[0]) {
+							setSelectedTerminal(terminals.subscribers[0].terminalId);
+						}
+					}
 					setNoticeTaxCode('');
 					setPaymentNoticeNumber('');
 					setToastActive(true);
@@ -345,9 +360,10 @@ export const Paga = () => {
 								onChange={onChangeSelect}
 								error={terminalError}
 							>
-								<MenuItem disabled value={'-'}>
-									Scegli un terminale...
-								</MenuItem>
+								{terminals.subscribers.length > 1 && (
+									<MenuItem value={'-'}>{'Seleziona un terminale...'}</MenuItem>
+								)}
+
 								{terminals.subscribers?.map((term: Terminal, index: number) => {
 									return (
 										<MenuItem value={term.terminalId}>{term.label}</MenuItem>
@@ -361,7 +377,7 @@ export const Paga = () => {
 							onClick={activatePayment}
 							sx={{ width: '40vw' }}
 						>
-							Attiva pagamento{' '}
+							Attiva pagamento
 						</Button>
 					</Stack>
 				</Box>

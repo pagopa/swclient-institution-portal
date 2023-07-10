@@ -158,7 +158,7 @@ export const Storico = () => {
 			row.fee = (parseFloat(row.fee) / 100).toFixed(2);
 		}
 		if (typeof row.totalAmount === 'number') {
-			row.totalAmount = parseFloat(row.totalAmount).toFixed(2);
+			row.totalAmount = (parseFloat(row.totalAmount) / 100).toFixed(2);
 		}
 		setSelectedTransaction(row);
 	};
@@ -458,8 +458,16 @@ export const Storico = () => {
 										{selectedTransaction.fee} €
 									</Typography>
 									<Typography id="modal-modal-description" sx={{ mt: 2 }}>
-										<b>Ammontare totale: </b>
+										<b>Importo avviso: </b>
 										{selectedTransaction.totalAmount} €
+									</Typography>
+									<Typography id="modal-modal-description" sx={{ mt: 2 }}>
+										<b>Ammontare totale : </b>
+										{(
+											parseFloat(selectedTransaction.totalAmount) +
+											parseFloat(selectedTransaction.fee)
+										).toFixed(2)}
+										€
 									</Typography>
 									<Typography id="modal-modal-description" sx={{ mt: 2 }}>
 										<b>Stato: </b>
