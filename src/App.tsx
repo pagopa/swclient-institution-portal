@@ -10,7 +10,7 @@ import {
 	useParams,
 	Params,
 } from 'react-router-dom';
-import utils from './utils';
+import utils from './utils/utils';
 /* MUI Core Components */
 import { VerticalNav } from './components/VerticalNav';
 import { ThemeProvider } from '@mui/material';
@@ -149,14 +149,14 @@ function App() {
 						companyLink={{ href: 'test', ariaLabel: 'Company Link' }}
 						currentLangCode={undefined}
 						languages={{ it: { it: 'Italiano' } }}
-						onLanguageChanged={() => {}}
+						onLanguageChanged={() => { }}
 						postLoginLinks={[
 							{
 								label: '',
 								href: 'string',
 								ariaLabel: 'POSTLOG',
 								linkType: 'internal',
-								onClick: () => {},
+								onClick: () => { },
 							},
 						]}
 						preLoginLinks={{
@@ -166,7 +166,7 @@ function App() {
 										label: 'About us',
 										ariaLabel: 'string',
 										linkType: 'internal',
-										onClick: () => {},
+										onClick: () => { },
 									},
 								],
 							},
@@ -177,7 +177,7 @@ function App() {
 										label: 'Resources',
 										ariaLabel: 'string',
 										linkType: 'internal',
-										onClick: () => {},
+										onClick: () => { },
 									},
 								],
 							},
@@ -192,7 +192,7 @@ function App() {
 										title: 'Social',
 										ariaLabel: 'Social',
 										/** if defined it will override the href behavior */
-										onClick: () => {},
+										onClick: () => { },
 									},
 								],
 								links: [
@@ -200,7 +200,7 @@ function App() {
 										label: 'string',
 										ariaLabel: 'string',
 										linkType: 'internal',
-										onClick: () => {},
+										onClick: () => { },
 									},
 								],
 							},

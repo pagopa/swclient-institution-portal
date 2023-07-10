@@ -14,10 +14,9 @@ import {
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import DeleteIcon from '@mui/icons-material/DeleteForever';
 import axios from 'axios';
-import { StatusChip } from '../storico';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import Snackbar from '../../components/Snackbar';
-import utils from '../../utils';
+import utils from '../../utils/utils';
 
 export interface Terminals {
 	subscribers: [Terminal];
@@ -148,10 +147,10 @@ export const Dispositivi = () => {
 		try {
 			await axios.delete(
 				process.env.REACT_APP_API_ADDRESS +
-					'/terminals/' +
-					paTaxCode +
-					'/' +
-					selectedTerminal.row.subscriberId,
+				'/terminals/' +
+				paTaxCode +
+				'/' +
+				selectedTerminal.row.subscriberId,
 				{
 					headers: {
 						Authorization: 'Bearer ' + sessionStorage.getItem('access_token'),
@@ -187,7 +186,6 @@ export const Dispositivi = () => {
 			});
 		});
 
-		console.log(r);
 		setRows(r);
 	}, [terminals]);
 

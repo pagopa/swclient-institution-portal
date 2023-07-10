@@ -50,7 +50,7 @@ export default function SimpleSnackbar({
 				open={open}
 				onClose={handleClose}
 				action={action}
-				autoHideDuration={6000}
+				autoHideDuration={2000}
 			>
 				<Alert
 					sx={{

@@ -19,9 +19,27 @@ import {
 } from '@mui/material';
 import axios from 'axios';
 import LoadingSpinner from '../../components/LoadingSpinner';
-import utils from '../../utils';
+import utils from '../../utils/utils';
+import { useInterval } from '../../utils/useInterval';
+import TransactionModal from '../../components/TransactionModal';
+import { Await } from 'react-router-dom';
 export interface Terminals {
 	subscribers: [Terminal];
+}
+
+export interface Row {
+	id: number;
+	transactionId: string;
+	noticeNumber: string;
+	statusTimestamp: Date;
+	amount: string | number;
+	status: string;
+	paTaxCode: string;
+	description: string;
+	company: string;
+	office: string;
+	fee: string;
+	totalAmount: string;
 }
 
 export interface Terminal {
@@ -38,6 +56,7 @@ export interface Terminal {
 
 export const Paga = () => {
 	const [selectedTerminal, setSelectedTerminal] = useState('-');
+	const [modalOpen, setModalOpen] = useState(false);
 	const [terminals, setTerminals] = useState<Terminals | { subscribers: [] }>({
 		subscribers: [],
 	});
@@ -57,6 +76,79 @@ export const Paga = () => {
 	const [toastMessage, setToastMessage] = useState('');
 	const validateTaxCode = new RegExp('[0-9]{11}');
 	const [isFetching, setIsFetching] = useState(false);
+	const [isPolling, setIsPolling] = useState(false);
+	const [pollingCounter, setPollingCounter] = useState(0);
+	const [latestTransaction, setLatestTransaction] = useState<Row>({
+		id: 0,
+		transactionId: "string",
+		noticeNumber: "string",
+		statusTimestamp: new Date(),
+		amount: "string | number",
+		status: "string",
+		paTaxCode: "string",
+		description: "string",
+		company: "string",
+		office: "string",
+		fee: "string",
+		totalAmount: "string"
+	})
+
+	const getLatestTransaction = async () => {
+		if (selectedTerminal === '-') {
+			return;
+		}
+		try {
+			const selectedTerminalObject: Terminal[] = terminals.subscribers.filter(
+				(term) => term.terminalId === selectedTerminal
+			);
+			await utils.checkTokenValidity();
+
+			const data: any = await axios.get(
+				process.env.REACT_APP_API_ADDRESS +
+				'/presets/' +
+				paTaxCode +
+				'/' +
+				selectedTerminalObject[0]?.subscriberId,
+				{
+					headers: {
+						Authorization: 'Bearer ' + sessionStorage.getItem('access_token'),
+						RequestId: process.env.REACT_APP_REQUEST_ID,
+					},
+				}
+			);
+			const element = data.data.presets[data.data.presets.length - 1]; /* I get the latest transaction, which is the last one from the list of all transaction */
+
+			const trans = {
+				id: 0,
+				transactionId: element?.statusDetails?.transactionId || '-',
+				noticeNumber: element?.noticeNumber || '-',
+				statusTimestamp: new Date(element?.statusTimestamp) || '-',
+				amount:
+					typeof element?.statusDetails?.notices[0].amount === 'number'
+						? (element?.statusDetails?.notices[0].amount / 100).toFixed(2)
+						: '-',
+				status: element?.statusDetails?.status || '-',
+				paTaxCode: element?.paTaxCode || '-',
+				description: element?.statusDetails?.notices[0].description || '-',
+				company: element?.statusDetails?.notices[0].company || '-',
+				office: element?.statusDetails?.notices[0].office || '-',
+				fee: typeof element?.statusDetails?.fee === 'number'
+					? (element?.statusDetails?.fee / 100).toFixed(2)
+					: '-',
+				totalAmount: typeof element?.statusDetails?.totalAmount === 'number'
+					? (element?.statusDetails?.totalAmount / 100).toFixed(2)
+					: '-',
+			}
+			await setLatestTransaction(trans);
+			setModalOpen(true)
+
+		} catch (e) {
+			setToastActive(true);
+			setToastStatus('error');
+			setToastMessage('Errore! ' + e);
+		}
+
+	};
 
 	useEffect(() => {
 		if (process.env.REACT_APP_IS_USING_MOCK === 'true') {
@@ -88,6 +180,17 @@ export const Paga = () => {
 			); /* If only one terminal is present, then set it as the seelcted terminal*/
 		}
 	}, [terminals]);
+
+	useInterval(() => {
+		console.log("EE");
+		getLatestTransaction();
+		setPollingCounter(pollingCounter + 1);
+		if (pollingCounter >= 10) {
+			setIsPolling(false);
+			setPollingCounter(0);
+		}  /* Activate polling every 2 seconds to check the transaction status, after 10 times (20 seconds) if nothing has changed, stop polling and resets the polling counter*/
+	}, isPolling ? 2000 : null)
+
 
 	const getTerminals = async () => {
 		await utils.checkTokenValidity(); //Check if token is valid, if not, or if token is null, get a new token
@@ -127,7 +230,7 @@ export const Paga = () => {
 			);
 			setTerminals(data.data);
 		} catch (e) {
-			setToastActive(
+			console.log(e); setToastActive(
 				true
 			); /* If an exception is thrown activate the toast, set its status to error and show an error message */
 			setToastStatus('error');
@@ -268,6 +371,7 @@ export const Paga = () => {
 					setPaymentNoticeNumber('');
 					setToastActive(true);
 					setToastStatus('success');
+					setIsPolling(true);
 					setToastMessage('Pagamento attivato!');
 				} else {
 					setToastActive(true);
@@ -289,6 +393,8 @@ export const Paga = () => {
 		<>
 			{isFetching ? <LoadingSpinner /> : ''}
 			<Container>
+				{<TransactionModal modalOpen={modalOpen} setModalOpen={setModalOpen} selectedTransaction={latestTransaction} closable={!isPolling} />
+				}
 				{toastStatus === 'success' ? (
 					<Snackbar
 						status={'success'}

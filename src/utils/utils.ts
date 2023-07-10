@@ -13,8 +13,6 @@ export default class Utils {
 			}
 		};
 		const decodedJwt = parseJwt(sessionStorage.getItem('access_token'));
-		console.log('TOKEN:' + decodedJwt?.exp * 1000);
-		console.log(Date.now());
 		if (decodedJwt?.exp * 1000 < Date.now()) {
 			console.log('Refreshing token... ');
 			await axios
