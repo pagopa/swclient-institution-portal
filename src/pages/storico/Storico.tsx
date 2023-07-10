@@ -52,7 +52,7 @@ export interface Row {
 	transactionId: string;
 	noticeNumber: string;
 	statusTimestamp: Date;
-	amount: string;
+	amount: string | number;
 	status: string;
 	paTaxCode: string;
 	description: string;
@@ -84,7 +84,7 @@ export interface Operation {
 				paymentToken: string;
 				paTaxCode: string;
 				noticeNumber: string;
-				amount: string;
+				amount: string | number;
 				description: string;
 				company: string;
 				office: string;
@@ -258,7 +258,10 @@ export const Storico = () => {
 				transactionId: element?.statusDetails?.transactionId || '-',
 				noticeNumber: element?.noticeNumber || '-',
 				statusTimestamp: new Date(element?.statusTimestamp) || '-',
-				amount: element?.statusDetails?.notices[0].amount || '-',
+				amount:
+					typeof element?.statusDetails?.notices[0].amount === 'number'
+						? element?.statusDetails?.notices[0].amount / 100 + ' €'
+						: '-',
 				status: element?.statusDetails?.status || '-',
 				paTaxCode: element?.paTaxCode || '-',
 				description: element?.statusDetails?.notices[0].description || '-',
@@ -314,7 +317,7 @@ export const Storico = () => {
 						}}
 						sx={{ width: '75%', height: '50%' }}
 					>
-						Dettagli{' '}
+						Dettagli
 					</Button>
 				);
 			},
@@ -346,6 +349,14 @@ export const Storico = () => {
 			getTerminals();
 		}
 	}, [sessionStorage.getItem('access_token')]);
+
+	useEffect(() => {
+		if (terminals.subscribers?.length == 1) {
+			setSelectedTerminal(
+				terminals.subscribers[0].terminalId
+			); /* If only one terminal is present, then set it as the seelcted terminal*/
+		}
+	}, [terminals]);
 
 	const Item = styled(Paper)(({ theme }) => ({
 		backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
