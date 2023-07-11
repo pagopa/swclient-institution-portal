@@ -80,18 +80,18 @@ export const Paga = () => {
 	const [pollingCounter, setPollingCounter] = useState(0);
 	const [latestTransaction, setLatestTransaction] = useState<Row>({
 		id: 0,
-		transactionId: "string",
-		noticeNumber: "string",
+		transactionId: 'string',
+		noticeNumber: 'string',
 		statusTimestamp: new Date(),
-		amount: "string | number",
-		status: "string",
-		paTaxCode: "string",
-		description: "string",
-		company: "string",
-		office: "string",
-		fee: "string",
-		totalAmount: "string"
-	})
+		amount: 'string | number',
+		status: 'string',
+		paTaxCode: 'string',
+		description: 'string',
+		company: 'string',
+		office: 'string',
+		fee: 'string',
+		totalAmount: 'string',
+	});
 
 	const getLatestTransaction = async () => {
 		if (selectedTerminal === '-') {
@@ -105,10 +105,10 @@ export const Paga = () => {
 
 			const data: any = await axios.get(
 				process.env.REACT_APP_API_ADDRESS +
-				'/presets/' +
-				paTaxCode +
-				'/' +
-				selectedTerminalObject[0]?.subscriberId,
+					'/presets/' +
+					paTaxCode +
+					'/' +
+					selectedTerminalObject[0]?.subscriberId,
 				{
 					headers: {
 						Authorization: 'Bearer ' + sessionStorage.getItem('access_token'),
@@ -116,7 +116,10 @@ export const Paga = () => {
 					},
 				}
 			);
-			const element = data.data.presets[data.data.presets.length - 1]; /* I get the latest transaction, which is the last one from the list of all transaction */
+			const element =
+				data.data.presets[
+					data.data.presets.length - 1
+				]; /* I get the latest transaction, which is the last one from the list of all transaction */
 
 			const trans = {
 				id: 0,
@@ -132,65 +135,23 @@ export const Paga = () => {
 				description: element?.statusDetails?.notices[0].description || '-',
 				company: element?.statusDetails?.notices[0].company || '-',
 				office: element?.statusDetails?.notices[0].office || '-',
-				fee: typeof element?.statusDetails?.fee === 'number'
-					? (element?.statusDetails?.fee / 100).toFixed(2)
-					: '-',
-				totalAmount: typeof element?.statusDetails?.totalAmount === 'number'
-					? (element?.statusDetails?.totalAmount / 100).toFixed(2)
-					: '-',
-			}
+				fee:
+					typeof element?.statusDetails?.fee === 'number'
+						? (element?.statusDetails?.fee / 100).toFixed(2)
+						: '-',
+				totalAmount:
+					typeof element?.statusDetails?.totalAmount === 'number'
+						? (element?.statusDetails?.totalAmount / 100).toFixed(2)
+						: '-',
+			};
 			await setLatestTransaction(trans);
-			setModalOpen(true)
-
+			setModalOpen(true);
 		} catch (e) {
 			setToastActive(true);
 			setToastStatus('error');
 			setToastMessage('Errore! ' + e);
 		}
-
 	};
-
-	useEffect(() => {
-		if (process.env.REACT_APP_IS_USING_MOCK === 'true') {
-			/* If mocking use this data, otherwise call the API */
-			setTerminals({
-				subscribers: [
-					{
-						acquirerId: '4585625',
-						channel: 'POS',
-						merchantId: '28405fHfk73x88D',
-						terminalId: '0aB9wXyZ',
-						paTaxCode: '00139860050',
-						subscriberId: 'x46tr3',
-						label: 'Reception POS',
-						subscriptionTimestamp: '2023-05-05T09:31:33',
-						lastUsageTimestamp: '2023-05-08T10:55:57',
-					},
-				],
-			});
-		} else {
-			getTerminals();
-		}
-	}, []);
-
-	useEffect(() => {
-		if (terminals.subscribers?.length == 1) {
-			setSelectedTerminal(
-				terminals.subscribers[0].terminalId
-			); /* If only one terminal is present, then set it as the seelcted terminal*/
-		}
-	}, [terminals]);
-
-	useInterval(() => {
-		console.log("EE");
-		getLatestTransaction();
-		setPollingCounter(pollingCounter + 1);
-		if (pollingCounter >= 10) {
-			setIsPolling(false);
-			setPollingCounter(0);
-		}  /* Activate polling every 2 seconds to check the transaction status, after 10 times (20 seconds) if nothing has changed, stop polling and resets the polling counter*/
-	}, isPolling ? 2000 : null)
-
 
 	const getTerminals = async () => {
 		await utils.checkTokenValidity(); //Check if token is valid, if not, or if token is null, get a new token
@@ -230,7 +191,8 @@ export const Paga = () => {
 			);
 			setTerminals(data.data);
 		} catch (e) {
-			console.log(e); setToastActive(
+			console.log(e);
+			setToastActive(
 				true
 			); /* If an exception is thrown activate the toast, set its status to error and show an error message */
 			setToastStatus('error');
@@ -389,11 +351,61 @@ export const Paga = () => {
 		}
 	};
 
+	useEffect(() => {
+		if (process.env.REACT_APP_IS_USING_MOCK === 'true') {
+			/* If mocking use this data, otherwise call the API */
+			setTerminals({
+				subscribers: [
+					{
+						acquirerId: '4585625',
+						channel: 'POS',
+						merchantId: '28405fHfk73x88D',
+						terminalId: '0aB9wXyZ',
+						paTaxCode: '00139860050',
+						subscriberId: 'x46tr3',
+						label: 'Reception POS',
+						subscriptionTimestamp: '2023-05-05T09:31:33',
+						lastUsageTimestamp: '2023-05-08T10:55:57',
+					},
+				],
+			});
+		} else {
+			getTerminals();
+		}
+	}, []);
+
+	useEffect(() => {
+		if (terminals.subscribers?.length == 1) {
+			setSelectedTerminal(
+				terminals.subscribers[0].terminalId
+			); /* If only one terminal is present, then set it as the seelcted terminal*/
+		}
+	}, [terminals]);
+
+	useInterval(
+		() => {
+			getLatestTransaction();
+			setPollingCounter(pollingCounter + 1);
+			if (pollingCounter >= 10) {
+				setIsPolling(false);
+				setPollingCounter(0);
+			} /* Activate polling every 2 seconds to check the transaction status, after 10 times (20 seconds) if nothing has changed, stop polling and resets the polling counter*/
+		},
+		isPolling ? 2000 : null
+	);
+
 	return (
 		<>
 			{isFetching ? <LoadingSpinner /> : ''}
 			<Container>
-				{<TransactionModal modalOpen={modalOpen} setModalOpen={setModalOpen} selectedTransaction={latestTransaction} closable={!isPolling} />
+				{
+					<TransactionModal
+						modalOpen={modalOpen}
+						setModalOpen={setModalOpen}
+						selectedTransaction={latestTransaction}
+						closable={!isPolling}
+						loading={isPolling}
+					/>
 				}
 				{toastStatus === 'success' ? (
 					<Snackbar
