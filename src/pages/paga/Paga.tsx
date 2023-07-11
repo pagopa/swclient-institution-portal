@@ -347,7 +347,7 @@ export const Paga = () => {
 			}
 			setTimeout(() => {
 				setIsFetching(false);
-			}, 500);
+			}, 2000);
 		}
 	};
 
@@ -386,10 +386,11 @@ export const Paga = () => {
 		() => {
 			getLatestTransaction();
 			setPollingCounter(pollingCounter + 1);
-			if (pollingCounter >= 10) {
+			if (pollingCounter >= 10 || latestTransaction.status === 'CLOSED') {
 				setIsPolling(false);
 				setPollingCounter(0);
-			} /* Activate polling every 2 seconds to check the transaction status, after 10 times (20 seconds) if nothing has changed, stop polling and resets the polling counter*/
+			} /* Activate polling every 2 seconds to check the transaction status,
+			 after 10 times (20 seconds) if nothing has changed and the status still isn't CLOSED, stop polling and resets the polling counter*/
 		},
 		isPolling ? 2000 : null
 	);
