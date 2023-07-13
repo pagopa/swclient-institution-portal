@@ -98,6 +98,7 @@ export const Paga = () => {
 			return;
 		}
 		try {
+
 			const selectedTerminalObject: Terminal[] = terminals.subscribers.filter(
 				(term) => term.terminalId === selectedTerminal
 			);
@@ -105,10 +106,10 @@ export const Paga = () => {
 
 			const data: any = await axios.get(
 				process.env.REACT_APP_API_ADDRESS +
-					'/presets/' +
-					paTaxCode +
-					'/' +
-					selectedTerminalObject[0]?.subscriberId,
+				'/presets/' +
+				paTaxCode +
+				'/' +
+				selectedTerminalObject[0]?.subscriberId,
 				{
 					headers: {
 						Authorization: 'Bearer ' + sessionStorage.getItem('access_token'),
@@ -118,7 +119,7 @@ export const Paga = () => {
 			);
 			const element =
 				data.data.presets[
-					data.data.presets.length - 1
+				data.data.presets.length - 1
 				]; /* I get the latest transaction, which is the last one from the list of all transaction */
 
 			const trans = {
@@ -322,13 +323,6 @@ export const Paga = () => {
 				);
 				if (res.status === 200 || res.status === 201) {
 					/* Again, if after the API call, only one terminal is present, set it as the selected one */
-					if (terminals.subscribers?.length > 1) {
-						setSelectedTerminal('-');
-					} else {
-						if (terminals.subscribers[0]) {
-							setSelectedTerminal(terminals.subscribers[0].terminalId);
-						}
-					}
 					setNoticeTaxCode('');
 					setPaymentNoticeNumber('');
 					setToastActive(true);
@@ -389,6 +383,14 @@ export const Paga = () => {
 			if (pollingCounter >= 10 || latestTransaction.status === 'CLOSED') {
 				setIsPolling(false);
 				setPollingCounter(0);
+				if (terminals.subscribers?.length > 1) {
+					setSelectedTerminal('-');
+				} else {
+					if (terminals.subscribers[0]) {
+						setSelectedTerminal(terminals.subscribers[0].terminalId);
+					}
+				}
+
 			} /* Activate polling every 2 seconds to check the transaction status,
 			 after 10 times (20 seconds) if nothing has changed and the status still isn't CLOSED, stop polling and resets the polling counter*/
 		},
