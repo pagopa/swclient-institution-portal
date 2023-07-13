@@ -380,7 +380,7 @@ export const Paga = () => {
 		() => {
 			getLatestTransaction();
 			setPollingCounter(pollingCounter + 1);
-			if (pollingCounter >= 10 || latestTransaction.status === 'CLOSED') {
+			if (pollingCounter >= 30 || latestTransaction.status === 'CLOSED') {
 				setIsPolling(false);
 				setPollingCounter(0);
 				if (terminals.subscribers?.length > 1) {
